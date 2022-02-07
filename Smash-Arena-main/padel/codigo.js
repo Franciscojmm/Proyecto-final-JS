@@ -21,7 +21,6 @@ document.getElementById("cerrarSesion").addEventListener("click",cerrarSesion,fa
 //Creamos el objeto gestion y despues cargamos el documento XML
 var oGestion = new Gestion();
 var oXML = loadXMLDoc("xmlSMASH-ARENA.xml");
-obtenerCokkieUsuario();
 
 
 //Llamada a todas las funciones principales

@@ -1,7 +1,7 @@
 
 frmLogin.botonEnviar.addEventListener("click",iniciasesion,false);
 document.getElementById("registro").addEventListener("click",irAlRegistro,false);
-
+frmAltaUsuario.botonEnviar.addEventListener("click",registroUsu,false);
 
 if(localStorage.getItem('session')!=null)
 {
@@ -25,14 +25,38 @@ function irAlRegistro()
     document.getElementById("frmLogin").style.display="none";
     document.getElementById("frmAltaUsuario").style.display="block";
 }
+function registroUsu(){
+    var oAjax = instanciarXHR();
+            var sParametros = "usuario=";
+            let sNombreUsuario = document.querySelector(".nombreUsuario").value;     
+            let sDNI = document.querySelector(".dniUsuario").value;     
+            let iEdad = document.querySelector(".Edad").value;     
+            let bSexo;
+            let bInstructor;
+
+            if(document.getElementById('radioSexoHombreAltaUsuario').checked){
+                bSexo=true;
+            }else {
+                bSexo=false;
+            }
+            if(document.getElementsByName('checkInstructor')[0].checked){
+                bInstructor=true;
+            }else {
+                bInstructor=false;
+            }
+            sParametros += JSON.stringify({nombre : sNombreUsuario , contrasena : sDNI , edad : iEdad , sexo : bSexo , instruct : bInstructor , funcion : "insertar" });
+            oAjax.open("GET", encodeURI("../compruebaUsuario.php?" + sParametros)); //Cambiar a POST los insert son con POST.
+            oAjax.addEventListener("readystatechange", procesoRespuestaInsercion, false);
+            oAjax.send();
+}
 
 function comprobarUsuario(nombreUsu,contra) {
             // Instanciar objeto Ajax
             var oAjax = instanciarXHR();
-
+            let funcionLLamada = "obtenerUsu";
             // Parametros
             var sParametros = "usuario=";
-            sParametros += JSON.stringify({nombre : nombreUsu , contraseña : contra})
+            sParametros += JSON.stringify({nombre : nombreUsu , contrasena : contra , funcion : funcionLLamada});
 
             //Configurar la llamada --> Asincrono por defecto
             oAjax.open("GET", encodeURI("../compruebaUsuario.php?" + sParametros));
@@ -42,8 +66,29 @@ function comprobarUsuario(nombreUsu,contra) {
 
             //Hacer la llamada
             oAjax.send();
-
         }
+
+        function procesoRespuestaInsercion(){
+            var oAjax = this;
+
+            if (oAjax.readyState == 4 && oAjax.status == 200) {
+
+                console.log(oAjax.responseText);
+                var oRespuesta = oAjax.responseText;
+
+                if(oRespuesta == "Correcto")//Se inserto.
+                {
+                     alert("Se inserto el usuario de forma correcta.");
+                     document.getElementById("frmLogin").style.display="block";
+                     document.getElementById("frmAltaUsuario").style.display="none";
+                }
+                else//No existe
+                {
+                    alert("Usuario no registrado de forma correcta.");
+                }
+                
+                }
+            }
 
 
         function procesoRespuestaConsulta() {
