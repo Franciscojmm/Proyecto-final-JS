@@ -2,22 +2,28 @@
 frmLogin.botonEnviar.addEventListener("click",iniciasesion,false);
 document.getElementById("registro").addEventListener("click",irAlRegistro,false);
 frmAltaUsuario.botonEnviar.addEventListener("click",registroUsu,false);
+//var CryptoJS = require("crypto-js");
 
 if(localStorage.getItem('session')!=null)
 {
-    let sesion = JSON.parse(localStorage.getItem("session"));
-    frmLogin.usuario.value = sesion.nombre;
-    frmLogin.contraseña.value = sesion.contraseña;
+    /* Prueba de que viendo el codigo js se podría sacar 
+    alert(localStorage.getItem("session"));
+    alert(CryptoJS.AES.decrypt("U2FsdGVkX1/2fHud7ZZZkElnRog7Y9bNF180kXkBPt/UqRLiCXozBt5F0drrC0eoa9GVVBLqL6tNfXLCW2yaz2jo3ByjvMSA/9XwLN/YmTM=", 'clave').toString(CryptoJS.enc.Utf8));
+    */
+
+    //Descifrar la sesion del usuario.
+    let sesion = CryptoJS.AES.decrypt(localStorage.getItem("session"),"clave");
+    let sesionDes = JSON.parse(sesion.toString(CryptoJS.enc.Utf8));
+    frmLogin.usuario.value = sesionDes.nombre;
+    frmLogin.contraseña.value = sesionDes.contraseña;
 }
 
 function iniciasesion(){
     //Comprobación que el usuario está registrado en la base de datos.
-
     let nombreUsu = frmLogin.usuario.value;
     let contra = frmLogin.contraseña.value;
 
-    comprobarUsuario(nombreUsu,contra);
-   
+    comprobarUsuario(nombreUsu,contra);   
 }
 
 function irAlRegistro()
@@ -57,13 +63,10 @@ function comprobarUsuario(nombreUsu,contra) {
             // Parametros
             var sParametros = "usuario=";
             sParametros += JSON.stringify({nombre : nombreUsu , contrasena : contra , funcion : funcionLLamada});
-
             //Configurar la llamada --> Asincrono por defecto
             oAjax.open("GET", encodeURI("../compruebaUsuario.php?" + sParametros));
-
             //Asociar manejador de evento de la respuesta
             oAjax.addEventListener("readystatechange", procesoRespuestaConsulta, false);
-
             //Hacer la llamada
             oAjax.send();
         }
@@ -102,15 +105,15 @@ function comprobarUsuario(nombreUsu,contra) {
                 console.log(oAjax.responseText);
                 var oRespuesta = oAjax.responseText;
 
-                if(oRespuesta != 0)//Existe el usuario y puede entrar.
+                if(oRespuesta != "")//Existe el usuario y puede entrar.
                 {
-                     localStorage.setItem("session",JSON.stringify({nombre : nombreUsu , contraseña : contra}));
+                let usu = (parseInt(oRespuesta) == 1 ? "admin":"estandar");
+                let val = JSON.stringify({nombre : nombreUsu , contraseña : contra , tipoUsu : usu});
+                     localStorage.setItem("session",CryptoJS.AES.encrypt(val, "clave").toString());
                      window.location="../padel/index.html";
                 }
                 else//No existe
-                {
                     alert("Usuario no rregistrado.");
-                }
                 
                 }
             }

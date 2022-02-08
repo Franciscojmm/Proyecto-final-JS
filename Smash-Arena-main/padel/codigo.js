@@ -1,3 +1,5 @@
+//Obtener el usuario ver de que tipo es y mostrar solo las acciones disponibles para cada tipo de usuario.
+
 //Añadir eventos
 document.getElementById('altaUsuario').addEventListener("click",mostrarFormulario,false);
 document.getElementById('modificarUsuario').addEventListener("click",mostrarFormulario,false);

@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
---
+-- Crear la base datos antes de insertar (Con el mismo nombre de abajo).
 -- Base de datos: `smasharena`
 --
 
@@ -39,12 +39,7 @@ CREATE TABLE `clase` (
   `fechan_fin` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Volcado de datos para la tabla `clase`
---
 
-INSERT INTO `clase` (`id`, `nombre`, `descripcion`, `capacidad`, `tipo_actividad`, `dni_instructor`, `fecha_inicio`, `fechan_fin`) VALUES
-(1, 'Clase 1', 'Clase de padel , para principiantes.', 15, 'Principiantes', '12345678a', '2022-02-08', '2022-02-10');
 
 -- --------------------------------------------------------
 
@@ -111,6 +106,14 @@ INSERT INTO `usuarios` (`dni`, `nombre`, `edad`, `sexo`, `admin`, `instructor`) 
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Volcado de datos para la tabla `clase`
+--
+
+INSERT INTO `clase` (`id`, `nombre`, `descripcion`, `capacidad`, `tipo_actividad`, `dni_instructor`, `fecha_inicio`, `fechan_fin`) VALUES
+(1, 'Clase 1', 'Clase de padel , para principiantes.', 15, 'Principiantes', '12345678a', '2022-02-08', '2022-02-10');
+
 
 --
 -- Indices de la tabla `clase`

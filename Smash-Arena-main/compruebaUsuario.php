@@ -21,20 +21,19 @@ switch($oUsu->funcion)
 }
 
 function obtenerUsu($conexion, $oUsu){
-    $sql = "select count(*) as existe from usuarios where Nombre ='".$oUsu->nombre."' AND DNI='".$oUsu->contraseña."'";
+    $sql = "select count(*) as existe, admin from usuarios where Nombre ='".$oUsu->nombre."' AND DNI='".$oUsu->contrasena."'";
 
-    $resultados = mysqli_query($conexion,$sql) or die(mysqli_error($conexion));
-    
+    $resultados = mysqli_query($conexion,$sql) or die(mysqli_error($conexion)); 
     $fila = mysqli_fetch_assoc($resultados);
-    $datos = $fila['existe']; 
+    $numResul = $fila['existe']; 
        
-    mysqli_close($conexion);
-    
-    $_SESSION['nombre']=$oUsu->nombre;
-    $_SESSION['contrasena']=$oUsu->contraseña;
+    if($numResul > 0)
+        echo $fila['admin'];
+    else 
+        echo "";
+    //$_SESSION['nombre']=$oUsu->nombre;
+    //$_SESSION['contrasena']=$oUsu->contrasena;
     // función de PHP que convierte a formato JSON el array.
-    echo $datos; 
-      
 }
 
 function insertarUsu($conexion,$oUsu){
@@ -54,5 +53,7 @@ function insertarUsu($conexion,$oUsu){
     mysqli_query($conexion,$sql);
     echo("Correcto");
 }
+
+mysqli_close($conexion);
 
 ?>
