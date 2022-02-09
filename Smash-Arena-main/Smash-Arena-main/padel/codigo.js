@@ -52,81 +52,7 @@ cargarReservas();
 cargarComboPistas();
 cargarComboUsuarios();
 cargarComboClases();
-
-
-//Alta Usuario                                          
-function altaUsuario() {     
-    let sNombreUsuario = document.querySelector(".nombreUsuario").value;     
-    let sDNI = document.querySelector(".dniUsuario").value;     
-    let iEdad = document.querySelector(".Edad").value;     
-    let bSexo;
-    let bInstructor;
-    let bValido=true;
-
-    let sErrores="";
-    if(document.getElementById('radioSexoHombreAltaUsuario').checked){
-        bSexo=true;
-    }else {
-        bSexo=false;
-    }
-    if(document.getElementsByName('checkInstructor')[0].checked){
-        bInstructor=true;
-    }else {
-        bInstructor=false;
-    }
-
-    let oExpReg = /^[\sa-zA-Z]{3,40}$/; 
-    if(!validaFormularios(sNombreUsuario,oExpReg))
-    {
-        bValido=false;
-        document.querySelector(".nombreUsuario").classList.add("error");
-        sErrores += "El usuario no tiene el formato correcto\n";
-        document.querySelector(".nombreUsuario").focus();
-    }
-    else
-    document.querySelector(".nombreUsuario").classList.remove("error");
-
-
-    oExpReg = /^\d{8}[a-zA-Z]{1}$/; 
-    if(!validaFormularios(sDNI,oExpReg))
-    {
-        if(bValido)
-        document.querySelector(".dniUsuario").focus();
-
-        bValido=false;
-        document.querySelector(".dniUsuario").classList.add("error");
-        sErrores += "El DNI no tiene el formato correcto\n";
-    }
-    else
-    sDNI = document.querySelector(".dniUsuario").classList.remove("error");
-
-
-    oExpReg = /^\d{1,3}$/; 
-    if(!validaFormularios(iEdad,oExpReg))
-    {
-        if(bValido)
-        document.querySelector(".Edad").focus();
-
-        bValido=false;
-        document.querySelector(".Edad").classList.add("error");
-        sErrores += "La edad no tiene el formato correcto\n";
-    }
-    else
-    document.querySelector(".Edad").classList.remove("error");
-
-
-
-
-    if(bValido)
-    {
-        alert(oGestion.altaUsuario(new Usuario(sNombreUsuario,sDNI,iEdad,bSexo,bInstructor)));
-        cargarComboUsuarios();
-        frmAltaUsuario.reset();
-        ocultarTodosFormularios();
-    }
-    else
-    alert(sErrores);
-}
+                                        
 
 //Modificar Usuario
 function modificarUsuario() {
@@ -1206,3 +1132,15 @@ function cerrarSesion(){
     window.location="../login/login.html";
 }
 
+function instanciarXHR() {
+    var xhttp = null;
+
+    if (window.XMLHttpRequest) {
+        xhttp = new XMLHttpRequest();
+    } else // code for IE5 and IE6
+    {
+        xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+    return xhttp;
+}
