@@ -17,7 +17,7 @@ function obtenerDatosLogin(){
     return sesionDes
 }
 // Hasta aquí.
-recuperarUsuarios();
+//recuperarUsuarios();
 
 //Añadir eventos , si se cargan de forma dinamica quitar de aquí para evitar errores de referencia antes de cargar.
 document.getElementById('altaUsuario').addEventListener("click",mostrarFormulario,false);
@@ -27,9 +27,9 @@ document.getElementById('alquilarPista').addEventListener("click",mostrarFormula
 document.getElementById('crearClase').addEventListener("click",mostrarFormulario,false);
 document.getElementById('apuntarClase').addEventListener("click",mostrarFormulario,false);
 document.getElementById('listados').addEventListener("click",mostrarFormulario,false);
-frmAltaUsuario.botonEnviar.addEventListener("click",altaUsuario,false);
-document.getElementById('comboUsuarios').addEventListener("change",mostrarDatosUsuario,false);
-frmModificarUsuario.botonEnviar.addEventListener("click",modificarUsuario,false);
+//frmAltaUsuario.botonEnviar.addEventListener("click",altaUsuario,false);
+//document.getElementById('comboUsuarios').addEventListener("change",mostrarDatosUsuario,false);
+//frmModificarUsuario.botonEnviar.addEventListener("click",modificarUsuario,false);
 frmAltaClases.botonEnviar.addEventListener("click",altaClase,false);
 frmAltaReserva.botonEnviar.addEventListener("click",hacerReserva,false);
 frmAltaPista.botonEnviar.addEventListener("click",altaPista,false);
@@ -50,7 +50,7 @@ cargarPistas();
 cargarClases();
 cargarReservas();
 cargarComboPistas();
-recuperarUsuarios();
+//recuperarUsuarios();
 cargarComboClases();
                                         
 function recuperarUsuarios(){
@@ -119,7 +119,7 @@ function mostrarDatosUsuario(){
     }
 }
 
-function procesoRespuestaGetDNI(){
+/*function procesoRespuestaGetDNI(){
     let oAJAX = this;
     if (oAJAX.readyState == 4 && oAJAX.status == 200) {
         let oUsuario=JSON.parse(oAJAX.responseText);
@@ -141,7 +141,7 @@ function procesoRespuestaGetDNI(){
 
         
     }
-}
+}*/
 //Modificar Usuario
 function modificarUsuario() {
     let sNombreUsuario = document.querySelector(".nombreUsuarioModificar").value;
@@ -224,34 +224,29 @@ function updateUsuario(sDNI,sNombreUsuario,iEdad,bSexo,bInstructor){
     // 6. Peticion al servidor
     oAJAX.send();
 }
-//Mostrar todos los formularios (Si se añade un formulario se debe añadir el case correspondiente)
+
 function mostrarFormulario(oE){
-    ocultarTodosFormularios();
-    borrarTabla();
     oEvento = oE || window.event;
     oFormulario = oEvento.srcElement;
-    switch(oFormulario.textContent){
-        case "Alta Usuario" :
-            frmAltaUsuario.style.display = "block";
-            break;
-        case "Alquilar Pista" :
-            frmAltaReserva.style.display = "block";
-            break;
-        case "Modificar Usuario" :
-            frmModificarUsuario.style.display = "block";
-            break;
-        case "Alta Clase" :
-            frmAltaClases.style.display = "block";
-            break;
-        case "Alta Pista" :
-            frmAltaPista.style.display = "block";
-            break;
-        case "Apuntarse a una Clase" :
-            frmApuntarClase.style.display = "block";
-            break;
-        case "Listados" :
-            frmListados.style.display = "block";
-            break;
+    let idForm = oFormulario.dataset.formu;
+    //Cogerlo mejor con data-set.
+    console.log(idForm);
+    console.log(document.querySelector("#"+idForm));
+    console.log("formularios"+"/"+idForm+".html");
+    //Oculto todos los formularios menos este
+    $("form:not(#"+idForm+")").hide("normal");
+    // Verifico si ya he cargado el formulario antes
+    if (document.querySelector("#"+idForm) == null){
+        $("#divfrmModificarUsuario").load("../formularios"+"/"+idForm+".html",
+            function() {
+                //$.getScript(idForm+"/"+idForm+".js");
+                $("#"+idForm).show("normal");
+                recuperarUsuarios();
+            });
+    } else {
+        // Lo muestro si está oculto
+       // $("#"+idForm).parent().show("normal");
+       $("#"+idForm).show("normal");
     }
 }
 //borrarTabla

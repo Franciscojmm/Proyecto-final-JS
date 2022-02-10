@@ -16,25 +16,25 @@
             <div class="container-fluid">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a href="#" class="opcion nav-link" id="altaUsuario">Alta Usuario</a>
+                        <a href="#" class="opcion nav-link" id="altaUsuario" data-formu="frmAltaUsuario">Alta Usuario</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="opcion nav-link" id="modificarUsuario">Modificar Usuario</a>
+                        <a href="#" class="opcion nav-link" id="modificarUsuario" data-formu="frmModificarUsuario">Modificar Usuario</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="opcion nav-link" id="altaPista">Alta Pista</a>
+                        <a href="#" class="opcion nav-link" id="altaPista" data-formu="frmAltaPista">Alta Pista</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="opcion nav-link" id="alquilarPista">Alquilar Pista</a>
+                        <a href="#" class="opcion nav-link" id="alquilarPista" data-formu="frmAltaReserva">Alquilar Pista</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="opcion nav-link" id="crearClase">Alta Clase</a>
+                        <a href="#" class="opcion nav-link" id="crearClase" data-formu="frmAltaClases">Alta Clase</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="opcion nav-link" id="apuntarClase">Apuntarse a una Clase</a>
+                        <a href="#" class="opcion nav-link" id="apuntarClase" data-formu="frmApuntarClase">Apuntarse a una Clase</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="opcion nav-link" id="listados">Listados</a>
+                        <a href="#" class="opcion nav-link" id="listados" data-formu="frmListados">Listados</a>
                     </li>
                     <li>
                         <button class="btn" id="cerrarSesion">Cerrar Sesion</button>
@@ -44,72 +44,13 @@
         </nav>
 
         <div class="formularios">
-            <!--Formulario Alta Usuario-->
+            <!--Formulario Alta Usuario Este ya no esta-->
             <div class="divfrmAltaUsuario">
-                <form name="frmAltaUsuario" id="frmAltaUsuario">
-                    <legend><b>Alta de Usuario</b></legend>
-                    <hr>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">Nombre</span>
-                        <input type="text" class="form-control nombreUsuario" placeholder="Nombre y Apellidos" aria-label="Nombre y Apellidos" aria-describedby="basic-addon1" required>
-                    </div>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">DNI</span>
-                        <input type="text" class="form-control dniUsuario" placeholder="DNI" aria-label="DNI" aria-describedby="basic-addon1" required >
-                    </div>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">Edad</span>
-                        <input type="number" class="form-control Edad" placeholder="Edad" aria-label="Edad" aria-describedby="basic-addon1" required >
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="radioSexoAltaUsuario" id="radioSexoHombreAltaUsuario" checked>
-                        <label class="form-check-label" for="radioSexo">Hombre</label>
-                    </div>
-                    <div class="form-check form-check-inline mb-3">
-                        <input class="form-check-input" type="radio" name="radioSexoAltaUsuario" id="radioSexoMujerAltaUsuario">
-                        <label class="form-check-label" for="radioSexo">Mujer</label>
-                    </div>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" role="switch" name="checkInstructor" id="checkInstructor">
-                        <label class="form-check-label" for="checkInstructor">Instructor</label>
-                      </div>
-                    <div class="d-grid gap-2 d-md-block">
-                        <input type="button" name="botonEnviar" value="Aceptar" class="btn btn-primary">
-                        <input type="reset" name="botonCancelar" value="Cancelar" class="btn btn-secondary">
-                    </div>
-                </form>
+                
             </div>
             <!--Formulario Modificar Usuario-->
-            <div class="divfrmModificarUsuario">
-                <form name="frmModificarUsuario" id="frmModificarUsuario">
-                    <legend><b>Modificar Usuario</b></legend>
-                    <hr>
-                    <select class="form-select mb-3" aria-label="Selecciona un Usuario" id="comboUsuarios">
-                        <option selected value = "nulo">Selecciona un usuario...</option>
-                    </select>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">Nombre</span>
-                        <input type="text" class="form-control nombreUsuarioModificar" placeholder="Nombre y Apellidos" aria-label="Nombre y Apellidos" aria-describedby="basic-addon1">
-                    </div>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">Edad</span>
-                        <input type="number" class="form-control edadModificar" placeholder="Edad" aria-label="Edad" aria-describedby="basic-addon1">
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="radioSexo" id="radioSexoHombre" checked>
-                        <label class="form-check-label" for="radioSexo">Hombre</label>
-                    </div>
-                    <div class="form-check form-check-inline mb-3">
-                        <input class="form-check-input" type="radio" name="radioSexo" id="radioSexoMujer">
-                        <label class="form-check-label" for="radioSexo">Mujer</label>
-                    </div>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" role="switch" name="checkInstructor" id="checkInstructorModificar">
-                        <label class="form-check-label" for="checkInstructor">Instructor</label>
-                      </div>
-                    <input type="button" name="botonEnviar" value="Aceptar" class="btn btn-primary">
-                    <input type="reset" name="botonCancelar" value="Cancelar" class="btn btn-secondary">
-                </form>
+            <div class="divfrmModificarUsuario" id="divfrmModificarUsuario">
+                
             </div>
             <!--Formulario Alta Pista-->
             <div class="divfrmAltaPista">
@@ -242,6 +183,7 @@
                 </form>
             </div>
         </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
         <script type="text/javascript" src="objeto.js"></script>
         <script type="text/javascript" src="codigo.js"></script>
