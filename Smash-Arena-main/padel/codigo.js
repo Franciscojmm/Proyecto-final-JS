@@ -17,7 +17,7 @@ function obtenerDatosLogin(){
     return sesionDes
 }
 // Hasta aquí.
-
+recuperarUsuarios();
 
 //Añadir eventos , si se cargan de forma dinamica quitar de aquí para evitar errores de referencia antes de cargar.
 document.getElementById('altaUsuario').addEventListener("click",mostrarFormulario,false);
@@ -50,31 +50,117 @@ cargarPistas();
 cargarClases();
 cargarReservas();
 cargarComboPistas();
-cargarComboUsuarios();
+recuperarUsuarios();
 cargarComboClases();
                                         
+function recuperarUsuarios(){
 
+    // 1. Instanciar objeto AJAX
+    let oAJAX = instanciarXHR();
+
+    // 2. Construir URL y cadena de parametros
+    var sURL = "recuperarUsuarios.php";
+    var sParametros = "";
+
+    // 3. Definir manejador de eventos 
+    oAJAX.addEventListener("readystatechange", procesoRespuestaRecuperarUsuarios, false);
+
+    // 4. Definir la comunicacion asincrona --> true
+    oAJAX.open("POST", encodeURI(sURL), true);
+
+    // 5. Establecer cabecera POST
+    oAJAX.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    // 6. Peticion al servidor
+    oAJAX.send();
+}
+
+function procesoRespuestaRecuperarUsuarios(){
+    let oAJAX = this;
+    if (oAJAX.readyState == 4 && oAJAX.status == 200) {
+        var oUsuarios = JSON.parse(oAJAX.responseText);
+
+        let oCapa = document.getElementById('comboUsuarios');
+        while(oCapa.hasChildNodes()){
+            oCapa.removeChild(oCapa.firstChild);
+        }
+        oCapa.appendChild(document.createElement("OPTION"))
+        oCapa.lastChild.value = "nulo";
+        oCapa.lastChild.textContent = "Selecciona un usuario...";
+        for(let usuario of oUsuarios){
+            oCapa.appendChild(document.createElement("OPTION"));
+            oCapa.lastChild.value = usuario.dni;
+            oCapa.lastChild.textContent = usuario.nombre;
+        }
+    }
+  
+}
+function mostrarDatosUsuario(){
+     // Instanciar objeto Ajax
+     sDNI= document.querySelector("#comboUsuarios").value;
+     if (sDNI!="nulo") {  
+     var oAjax = instanciarXHR();
+
+     // Parametros
+     var sParametros = "dni=";
+     sParametros += sDNI;
+
+     //Configurar la llamada --> Asincrono por defecto
+     oAjax.open("GET", encodeURI("getUsuario.php?" + sParametros));
+
+     //Asociar manejador de evento de la respuesta
+     oAjax.addEventListener("readystatechange", procesoRespuestaGetDNI, false);
+
+     //Hacer la llamada
+     oAjax.send();
+    }else{
+        alert("Seleccione un usuario");
+        frmModificarUsuario.reset();
+    }
+}
+
+function procesoRespuestaGetDNI(){
+    let oAJAX = this;
+    if (oAJAX.readyState == 4 && oAJAX.status == 200) {
+        let oUsuario=JSON.parse(oAJAX.responseText);
+        for(let usuario of oUsuario){
+            console.log(usuario);
+            document.querySelector(".nombreUsuarioModificar").value = usuario.nombre;
+            document.querySelector(".edadModificar").value = usuario.edad;
+            if(usuario.sexo=="M"){
+                document.getElementById('radioSexoHombre').checked = true;
+            }else {
+                document.getElementById('radioSexoMujer').checked = true;
+            }
+            if(usuario.instructor=="S"){
+                document.getElementById("checkInstructorModificar").checked = true;
+            }else {
+                document.getElementById("checkInstructorModificar").checked = false;
+            }
+        }
+
+        
+    }
+}
 //Modificar Usuario
 function modificarUsuario() {
     let sNombreUsuario = document.querySelector(".nombreUsuarioModificar").value;
-    let sDNIABuscar = document.getElementById("comboUsuarios");
-    sDNIABuscar = sDNIABuscar.children[document.getElementById("comboUsuarios").selectedIndex].value;     
-    let sDNIAGuardar = document.querySelector(".dniUsuarioModificar").value;     
-    let iEdad = document.querySelector(".edadModificar").value;
+    let sDNI = document.getElementById("comboUsuarios").value;          
+    let iEdad = parseInt(document.querySelector(".edadModificar").value);
     let bSexo;
     let bInstructor;
     let sErrores="";
     let bValido=true;
 
     if(document.getElementById('radioSexoHombre').checked){
-        bSexo=true;
+        bSexo="M";
     }else {
-        bSexo=false;
+        bSexo="F";
     }
     if(document.getElementById('checkInstructorModificar').checked){
-        bInstructor = true;
+        bInstructor = "S";
     } else {
-        bInstructor = false;
+        bInstructor = "N";
     }
 
     if(document.getElementById("comboUsuarios").selectedIndex == 0)
@@ -94,21 +180,6 @@ function modificarUsuario() {
     else
     document.querySelector(".nombreUsuarioModificar").classList.remove("error");
 
-
-    oExpReg = /^\d{8}[a-zA-Z]{1}$/; 
-    if(!validaFormularios(sDNIAGuardar,oExpReg))
-    {
-        if(bValido)
-        document.querySelector(".dniUsuarioModificar").focus();
-
-        bValido=false;
-        document.querySelector(".dniUsuarioModificar").classList.add("error");
-        sErrores += "El DNI no tiene el formato correcto\n";
-    }
-    else
-    sDNI = document.querySelector(".dniUsuarioModificar").classList.remove("error");
-
-
     oExpReg = /^\d{1,3}$/; 
     if(!validaFormularios(iEdad,oExpReg))
     {
@@ -126,15 +197,33 @@ function modificarUsuario() {
 
 
 if(bValido){
-        alert(oGestion.modificarUsuario(sDNIABuscar,sDNIAGuardar,sNombreUsuario,iEdad,bSexo,bInstructor));
-        cargarComboUsuarios();
+        updateUsuario(sDNI,sNombreUsuario,iEdad,bSexo,bInstructor);
+        recuperarUsuarios();
         frmModificarUsuario.reset();
         ocultarTodosFormularios();
-}
-else
+}else
 alert(sErrores);
 }
 
+function updateUsuario(sDNI,sNombreUsuario,iEdad,bSexo,bInstructor){
+    // 1. Instanciar objeto AJAX
+    let oAJAX = instanciarXHR();
+    // 2. Construir URL y cadena de parametros
+    var sURL = "updateUsuario.php";
+    var sParametros = "";
+
+    // 3. Definir manejador de eventos 
+    oAJAX.addEventListener("readystatechange", procesoRespuestaUpdateUsuario, false);
+
+    // 4. Definir la comunicacion asincrona --> true
+    oAJAX.open("POST", encodeURI(sURL), true);
+
+    // 5. Establecer cabecera POST
+    oAJAX.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    // 6. Peticion al servidor
+    oAJAX.send();
+}
 //Mostrar todos los formularios (Si se añade un formulario se debe añadir el case correspondiente)
 function mostrarFormulario(oE){
     ocultarTodosFormularios();
@@ -526,47 +615,6 @@ function cargarPistas(){
         let numeroPista = oPista.getElementsByTagName("numero")[0].textContent;
         
         oGestion.altaPista(new Pista(nombrePista,numeroPista));
-    }
-}
-
-//Crea el combo de usuarios para modificarlos
-function cargarComboUsuarios() {
-    let oCapa = document.getElementById('comboUsuarios');
-    while(oCapa.hasChildNodes()){
-        oCapa.removeChild(oCapa.firstChild);
-    }
-    oCapa.appendChild(document.createElement("OPTION"))
-    oCapa.lastChild.value = "nulo";
-    oCapa.lastChild.textContent = "Selecciona un usuario...";
-    for(let usuario of oGestion.aUsuarios){
-        oCapa.appendChild(document.createElement("OPTION"));
-        oCapa.lastChild.value = usuario.DNI;
-        oCapa.lastChild.textContent = usuario.NombreAp
-    }
-}
-
-//Cuando selecciona un usuario del combo pinta los datos del usuario
-function mostrarDatosUsuario() {
-    let sDNI = document.getElementById('comboUsuarios').value;
-    if( sDNI != "nulo"){
-        let usuario = oGestion.buscarUsuario(sDNI);
-        document.querySelector(".nombreUsuarioModificar").value = usuario.NombreAp;
-        document.querySelector(".dniUsuarioModificar").value = usuario.DNI;
-        document.querySelector(".edadModificar").value = usuario.Edad;
-        if(usuario.Sexo==true){
-            document.getElementById('radioSexoHombre').checked = true;
-        }else {
-            document.getElementById('radioSexoMujer').checked = true;
-        }
-        if(usuario.EsInstructor==true){
-            document.getElementById("checkInstructorModificar").checked = true;
-        }else {
-            document.getElementById("checkInstructorModificar").checked = false;
-        }
-        
-    }else {
-        alert("Seleccione un usuario");
-        frmModificarUsuario.reset();
     }
 }
 

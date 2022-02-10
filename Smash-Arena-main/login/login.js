@@ -115,7 +115,7 @@ function comprobarUsuario(nombreUsu,contra) {
                      window.location="../padel/index.html";
                 }
                 else//No existe
-                    alert("Usuario no rregistrado.");
+                    alert("Usuario no registrado.");
                 
                 }
             }
