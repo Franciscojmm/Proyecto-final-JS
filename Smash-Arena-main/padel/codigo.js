@@ -209,8 +209,12 @@ function updateUsuario(sDNI,sNombreUsuario,iEdad,bSexo,bInstructor){
     let oAJAX = instanciarXHR();
     // 2. Construir URL y cadena de parametros
     var sURL = "updateUsuario.php";
-    var sParametros = "";
-
+    var sParametros = "datos=";
+    sParametros+=JSON.stringify({dni:sDNI,
+                  nombre:sNombreUsuario,
+                  edad:iEdad,
+                  sexo:bSexo,
+                  instructor:bInstructor});
     // 3. Definir manejador de eventos 
     oAJAX.addEventListener("readystatechange", procesoRespuestaUpdateUsuario, false);
 
@@ -221,7 +225,12 @@ function updateUsuario(sDNI,sNombreUsuario,iEdad,bSexo,bInstructor){
     oAJAX.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
     // 6. Peticion al servidor
-    oAJAX.send();
+    oAJAX.send(sParametros);
+}
+
+function procesoRespuestaUpdateUsuario(){
+    let oAJAX=this;
+    console.log(oAJAX.responseText);
 }
 
 function mostrarFormulario(oE){
