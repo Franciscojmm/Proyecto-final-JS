@@ -27,7 +27,6 @@ document.getElementById('alquilarPista').addEventListener("click",mostrarFormula
 document.getElementById('crearClase').addEventListener("click",mostrarFormulario,false);
 document.getElementById('apuntarClase').addEventListener("click",mostrarFormulario,false);
 document.getElementById('listados').addEventListener("click",mostrarFormulario,false);
-//frmAltaUsuario.botonEnviar.addEventListener("click",altaUsuario,false);
 //document.getElementById('comboUsuarios').addEventListener("change",mostrarDatosUsuario,false);
 //frmModificarUsuario.botonEnviar.addEventListener("click",modificarUsuario,false);
 frmAltaClases.botonEnviar.addEventListener("click",altaClase,false);
@@ -119,7 +118,7 @@ function mostrarDatosUsuario(){
     }
 }
 
-/*function procesoRespuestaGetDNI(){
+function procesoRespuestaGetDNI(){
     let oAJAX = this;
     if (oAJAX.readyState == 4 && oAJAX.status == 200) {
         let oUsuario=JSON.parse(oAJAX.responseText);
@@ -141,7 +140,7 @@ function mostrarDatosUsuario(){
 
         
     }
-}*/
+}
 //Modificar Usuario
 function modificarUsuario() {
     let sNombreUsuario = document.querySelector(".nombreUsuarioModificar").value;
@@ -239,9 +238,9 @@ function mostrarFormulario(oE){
     if (document.querySelector("#"+idForm) == null){
         $("#divfrmModificarUsuario").load("../formularios"+"/"+idForm+".html",
             function() {
-                //$.getScript(idForm+"/"+idForm+".js");
+                $.getScript("../formularios"+"/"+idForm+".js");
                 $("#"+idForm).show("normal");
-                recuperarUsuarios();
+                //recuperarUsuarios();
             });
     } else {
         // Lo muestro si está oculto
