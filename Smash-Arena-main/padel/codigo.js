@@ -87,9 +87,13 @@ function procesoRespuestaRecuperarUsuarios(){
         oCapa.lastChild.value = "nulo";
         oCapa.lastChild.textContent = "Selecciona un usuario...";
         for(let usuario of oUsuarios){
-            oCapa.appendChild(document.createElement("OPTION"));
-            oCapa.lastChild.value = usuario.dni;
-            oCapa.lastChild.textContent = usuario.nombre;
+            let admin = parseInt(usuario.admin);
+            console.log(admin);
+            if(admin!=1){
+                oCapa.appendChild(document.createElement("OPTION"));
+                oCapa.lastChild.value = usuario.dni;
+                oCapa.lastChild.textContent = usuario.nombre;
+            }
         }
     }
   
@@ -123,7 +127,6 @@ function procesoRespuestaGetDNI(){
     if (oAJAX.readyState == 4 && oAJAX.status == 200) {
         let oUsuario=JSON.parse(oAJAX.responseText);
         for(let usuario of oUsuario){
-            console.log(usuario);
             document.querySelector(".nombreUsuarioModificar").value = usuario.nombre;
             document.querySelector(".edadModificar").value = usuario.edad;
             if(usuario.sexo=="M"){
@@ -136,9 +139,7 @@ function procesoRespuestaGetDNI(){
             }else {
                 document.getElementById("checkInstructorModificar").checked = false;
             }
-        }
-
-        
+        }   
     }
 }
 //Modificar Usuario
@@ -230,7 +231,9 @@ function updateUsuario(sDNI,sNombreUsuario,iEdad,bSexo,bInstructor){
 
 function procesoRespuestaUpdateUsuario(){
     let oAJAX=this;
-    console.log(oAJAX.responseText);
+    if (oAJAX.readyState == 4 && oAJAX.status == 200) {
+        alert("Modificar Ok");
+    }
 }
 
 function mostrarFormulario(oE){
