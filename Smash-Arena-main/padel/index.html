@@ -65,6 +65,10 @@
                         <span class="input-group-text" id="basic-addon1">Número</span>
                         <input type="number" class="form-control numeroPista" placeholder="Número de la Pista" aria-label="numero" aria-describedby="basic-addon1">
                     </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">Descripción</span>
+                        <input type="text" class="form-control descripcionPista"  name="sDescripcionPista" placeholder="Descripción de la Pista" aria-label="Descripcion" aria-describedby="basic-addon1" id="sDescripcionPista">
+                    </div>
                     <input type="button" name="botonEnviar" value="Aceptar" class="btn btn-primary">
                     <input type="reset" name="botonCancelar" value="Cancelar" class="btn btn-secondary">
                 </form>
@@ -107,10 +111,6 @@
                     <legend><b>Crear una Clase</b></legend>
                     <hr>
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">ID</span>
-                        <input type="number" class="form-control idClase" placeholder="ID de la Clase" aria-label="ID de la Clase" aria-describedby="basic-addon1">
-                    </div>
-                    <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">Nombre</span>
                         <input type="text" class="form-control nombreClase" placeholder="Nombre de la Clase" aria-label="Nombre de la Clase" aria-describedby="basic-addon1">
                     </div>
@@ -123,17 +123,13 @@
                         <input type="date" class="form-control diaInicioClase" aria-label="Día de inicio de la Clase" aria-describedby="basic-addon1">
                     </div>
                     <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">Día de Fin</span>
-                        <input type="date" class="form-control diaFinClase" aria-label="Día de fin de la Clase" aria-describedby="basic-addon1">
-                    </div>
-                    <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">Hora Inicio</span>
                         <input type="time" class="form-control horaInicioClase" aria-label="Hora de Inicio de la Clase">
                     </div>
                     <div class="input-group mb-3">
-                            <span class="input-group-text" id="basic-addon1">Hora Fin</span>
-                            <input type="time" class="form-control horaFinClase" aria-label="Hora de Fin de la Clase">
-                        </div>
+                            <span class="input-group-text" id="basic-addon1">Duración</span>
+                            <input type="number" class="form-control duracionClase" aria-label="Duración" id="duracionClase" placeholder="Duración de la Clase">
+                    </div>
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="basic-addon1">Capacidad</span>
                         <input type="number" class="form-control capacidadClase" placeholder="Capacidad de la Clase" aria-label="ID de la Clase" aria-describedby="basic-addon1">

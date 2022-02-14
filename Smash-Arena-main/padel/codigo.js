@@ -17,7 +17,6 @@ function obtenerDatosLogin(){
     return sesionDes
 }
 // Hasta aquí.
-//recuperarUsuarios();
 
 //Añadir eventos , si se cargan de forma dinamica quitar de aquí para evitar errores de referencia antes de cargar.
 document.getElementById('altaUsuario').addEventListener("click",mostrarFormulario,false);
@@ -49,7 +48,6 @@ cargarPistas();
 cargarClases();
 cargarReservas();
 cargarComboPistas();
-//recuperarUsuarios();
 cargarComboClases();
                                         
 function recuperarUsuarios(){
@@ -387,39 +385,19 @@ function hacerReserva()
 }
 
 //Alta Clase
-function altaClase(){     
-    let iIdClase = document.querySelector(".idClase").value;     
+function altaClase(){        
     let sNombreClase = document.querySelector(".nombreClase").value;     
-    let sDescripcionClase = document.querySelector(".descripcionClase").value;     
-    let dtDiaInicio = new Date(document.querySelector('.diaInicioClase').value);
-    let horaInicio = new Date("1/1/1 "+document.querySelector(".horaInicioClase").value);
-    dtDiaInicio.setHours(horaInicio.getHours());
-    dtDiaInicio.setMinutes(horaInicio.getMinutes());     
-    let dtDiaFin = new Date(document.querySelector('.diaFinClase').value);
-    let horaFin = new Date ("1/1/1 "+document.querySelector(".horaFinClase").value);
-    dtDiaFin.setHours(horaFin.getHours());
-    dtDiaFin.setMinutes(horaFin.getMinutes());
+    let sDescripcionClase = document.querySelector(".descripcionClase").value;
+    console.log(document.querySelector('.diaInicioClase').value);     
+    let dtDiaInicio = document.querySelector('.diaInicioClase').value;
+    let horaInicio = document.querySelector(".horaInicioClase").value;    
+    let iDuracion = document.querySelector("#duracionClase").value;
     let iCapacidad = document.querySelector('.capacidadClase').value;     
     let sTipoClase = document.querySelector('.tipoClase').value;     
     let idInstructor = document.querySelector('.idInstructorClase').value;
     let dtHoy = fechaHoy();
     let sErrores="";
     let bValido=true;
-
-
-
-    let oExpReg = /^\d{1,3}$/; 
-    if(!validaFormularios(iIdClase,oExpReg))
-    {
-        document.querySelector(".idClase").focus();
-        bValido=false;
-        document.querySelector(".idClase").classList.add("error");
-        sErrores += "El id de la clase no tiene el formato correcto\n";
-    }
-    else
-    document.querySelector(".idClase").classList.remove("error");
-
-
 
     oExpReg = /^[\w\s]{4,40}$/; 
     if(!validaFormularios(sNombreClase,oExpReg))
@@ -450,19 +428,28 @@ function altaClase(){
 
 
     //Fechas y horas.
-    if(document.querySelector('.diaInicioClase').value == "" || document.querySelector('.diaFinClase').value=="")
+    if(document.querySelector('.diaInicioClase').value == "" )
     {
         bValido=false;
         sErrores+="Las fechas estan incompletas.\n";
     }
 
-    if(document.querySelector(".horaInicioClase").value == "" || document.querySelector(".horaFinClase").value == "")
+    if(document.querySelector(".horaInicioClase").value == "")
     {
         bValido=false;
         sErrores+="Las horas estan incompletas.\n";
+ 
     }
 
     //
+    if(document.querySelector("#duracionClase").value == "")
+    {
+        bValido=false;
+        sErrores+="La duración no puede estar vacía.\n";
+        document.querySelector("#duracionClase").classList.add("error");
+    }else {
+        document.querySelector("#duracionClase").classList.remove("error");
+    }
     oExpReg = /^\d{1,2}$/;
         if(!validaFormularios(iCapacidad,oExpReg))
     {
@@ -512,27 +499,46 @@ function altaClase(){
 
 if(bValido){
 
-    if(dtDiaFin < dtHoy || dtDiaInicio < dtHoy){
+    if(dtDiaInicio < dtHoy){
         alert("Las fechas introducidas son menores al dia y hora actual");
     }else {
-        if(dtDiaInicio < dtDiaFin){
-            alert(oGestion.altaClase(new Clase(iIdClase,sNombreClase,sDescripcionClase,dtDiaInicio,dtDiaFin,iCapacidad,sTipoClase,idInstructor)));
-            cargarComboClases();
-            frmAltaClases.reset();
-            ocultarTodosFormularios();
-        }else {
-            alert("La fecha de inicio es mayor a la fecha de fin");
-        }
+            insertarClase(sNombreClase,sDescripcionClase,dtDiaInicio,horaInicio,iDuracion,iCapacidad,sTipoClase,idInstructor);
     }
 }
 else{
     alert(sErrores);
 }
 }
+function insertarClase(sNombreClase,sDescripcionClase,dtDiaInicio,horaInicio,iDuracion,iCapacidad,sTipoClase,idInstructor){
+    var sParametros = { nombre:sNombreClase,
+                        descripcion:sDescripcionClase,
+                        fecha:dtDiaInicio,
+                        hora:horaInicio,
+                        duracion:iDuracion,
+                        capacidad: iCapacidad,
+                        tipo:sTipoClase,
+                        instructor:idInstructor};
+    fetch("insertarClase.php",{ method: 'POST', 
+                                body: JSON.stringify(sParametros), 
+                                headers:{
+                                  'Content-Type': 'application/json'
+                                }
+                            })
+    .then(function(response){
+        response.text().then(function(text){
+            alert(text);
+            cargarComboClases();
+            frmAltaClases.reset();
+            ocultarTodosFormularios();
+        });
+    });
+}
+
 //Alta Pista
 function altaPista(){
     let sNombrePista = document.querySelector(".nombrePista").value;
     let iIDPista = document.querySelector(".numeroPista").value;
+    let sDescripcion = document.querySelector("#sDescripcionPista").value;
     let sErrores="";
     let bValido=true;
 
@@ -562,22 +568,43 @@ function altaPista(){
     }
     else
     document.querySelector(".numeroPista").classList.remove("error");
-
+    if(sDescripcion==""){
+        bValido=false;
+        document.querySelector("#sDescripcionPista").classList.add("error");
+        sErrores += "La descripcion no puede estar vacía\n";
+    }else
+        document.querySelector("#sDescripcionPista").classList.remove("error");
 
     if(bValido)
     {
-        alert(oGestion.altaPista(new Pista(sNombrePista,iIDPista)));
-        cargarComboPistas();
-
-        frmAltaPista.reset(); 
-        ocultarTodosFormularios();
+        insertarPista(sNombrePista,iIDPista,sDescripcion);
     }
     else{
         alert(sErrores);
     }
 
 }
-
+function insertarPista(sNombrePista,iIDPista,sDescripcion){
+    var sParametros = { nombre:sNombrePista,
+                        numero:iIDPista,
+                        descripcion:sDescripcion};
+    fetch("insertarPista.php",{ method: 'POST', 
+                                body: JSON.stringify(sParametros), 
+                                headers:{
+                                  'Content-Type': 'application/json'
+                                }
+                            })
+    .then(function(response){
+        response.text().then(function(text){
+            if(text=="Alta pista OK"){
+                cargarComboPistas();
+                frmAltaPista.reset(); 
+                ocultarTodosFormularios();
+            }
+            alert(text);
+        });
+    });
+}
 //Apuntarse Clase
 function apuntarseClase() {
     let sDNI = document.querySelector(".dniUsuarioApuntarseClase").value;
