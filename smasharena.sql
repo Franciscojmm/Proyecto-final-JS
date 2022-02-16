@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-02-2022 a las 21:02:48
+-- Tiempo de generación: 16-02-2022 a las 20:06:46
 -- Versión del servidor: 10.4.22-MariaDB
 -- Versión de PHP: 8.1.2
 
@@ -99,10 +99,27 @@ CREATE TABLE `reserva` (
   `nombre` varchar(30) NOT NULL,
   `dia_reserva` date NOT NULL,
   `hora_inicio` time NOT NULL,
-  `hora_fin` int(11) NOT NULL,
-  `dia_fin` int(11) NOT NULL,
+  `hora_fin` time NOT NULL,
   `descripcion` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `reserva`
+--
+
+INSERT INTO `reserva` (`id_reserva`, `dni_usuario`, `id_pista`, `nombre`, `dia_reserva`, `hora_inicio`, `hora_fin`, `descripcion`) VALUES
+(7, '34562784W', 2, 'prueba', '2022-02-17', '19:02:00', '20:02:00', 'prueba'),
+(8, '34562784W', 3, 'prueba', '2022-02-17', '18:55:00', '19:55:00', 'prueba'),
+(9, '34562784W', 3, 'prueba', '2022-02-17', '22:00:00', '23:00:00', 'prueba'),
+(10, '34562784W', 3, 'prueba', '2022-02-17', '14:58:00', '15:58:00', 'prueba'),
+(11, '34562784W', 3, 'prueba', '2022-02-17', '20:00:00', '21:00:00', 'prueba'),
+(12, '34562784W', 3, 'prueba', '2022-02-17', '19:01:00', '20:01:00', 'prueba'),
+(13, '34562784W', 3, 'prueba', '2022-02-17', '19:02:00', '20:02:00', 'prueba'),
+(14, '34562784W', 3, 'prueba', '2022-02-17', '20:04:00', '21:04:00', 'prueba'),
+(15, '34562784W', 3, 'prueba', '2022-02-17', '00:19:00', '01:19:00', 'prueba'),
+(16, '34562784W', 2, 'prueba', '2022-02-18', '20:25:00', '21:25:00', 'prueba'),
+(17, '34562784W', 3, 'prueba', '2022-02-17', '13:55:00', '14:55:00', 'prueba'),
+(18, '34562784W', 3, 'prueba', '2022-02-18', '20:47:00', '21:47:00', 'prueba');
 
 -- --------------------------------------------------------
 
@@ -181,7 +198,7 @@ ALTER TABLE `clase`
 -- AUTO_INCREMENT de la tabla `reserva`
 --
 ALTER TABLE `reserva`
-  MODIFY `id_reserva` int(6) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_reserva` int(6) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- Restricciones para tablas volcadas
