@@ -139,4 +139,17 @@ legend {
 
 #registro{
     color: blue;
+    cursor: pointer;
+    text-decoration: underline;
+}
+.datosUsuarios{
+    text-align: center;
+    margin: 2rem !important;
+    width: auto !important;
+    border: solid;
+}
+
+#datosUsus{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
 }

@@ -1,4 +1,12 @@
 //Obtener el usuario ver de que tipo es y mostrar solo las acciones disponibles para cada tipo de usuario.
+function obtenerDatosLogin(){
+    let sesion = CryptoJS.AES.decrypt(localStorage.getItem("session"),"clave");
+    let sesionDes = JSON.parse(sesion.toString(CryptoJS.enc.Utf8));
+    
+    return sesionDes
+}
+var datosSesion = obtenerDatosLogin();
+
 if(obtenerDatosLogin().tipoUsu == "admin")
 {//Solo se mostraran las opciones de los admin.
     document.getElementById("altaUsuario").style.display="none";
@@ -9,14 +17,9 @@ if(obtenerDatosLogin().tipoUsu == "admin")
     document.getElementById("modificarUsuario").style.display="none";
     document.getElementById("altaPista").style.display="none";
     document.getElementById("crearClase").style.display="none";
+    cargarDatosUsuario();
 }
-function obtenerDatosLogin(){
-    let sesion = CryptoJS.AES.decrypt(localStorage.getItem("session"),"clave");
-    let sesionDes = JSON.parse(sesion.toString(CryptoJS.enc.Utf8));
-    
-    return sesionDes
-}
-var datosSesion = obtenerDatosLogin();
+
 // Hasta aquí.
 
 //Añadir eventos , si se cargan de forma dinamica quitar de aquí para evitar errores de referencia antes de cargar.
@@ -686,7 +689,7 @@ function construirDatosUsu(oXML){
 
             let oTabla = document.createElement("table");
             oTabla.classList.add("table");
-            //oTabla.classList.add("table-dark");
+            oTabla.classList.add("datosUsuarios");
             let oTHead = oTabla.createTHead();
             let oFila = oTHead.insertRow(-1);
             let oTH = document.createElement("TH");
@@ -697,17 +700,34 @@ function construirDatosUsu(oXML){
             let oTBody = oTabla.createTBody();
             oFila = oTBody.insertRow(-1);
             var oCelda = oFila.insertCell(-1);
-            oCelda.textContent = "Nombre de la Clase";
+            oCelda.textContent = "Nombre de la Clase :";
             oCelda = oFila.insertCell(-1);
             oCelda.textContent=oCLase.getElementsByTagName("nombreClase")[0].textContent;
 
             capaDatos.appendChild(oTabla);
         }
 
-        /*oReservas = oXML.getElementsByTagName("reserva");
+        oReservas = oXML.getElementsByTagName("reserva");
         for(let oReserva of oReservas){
-           capaDatos.textContent+=oReserva.getElementsByTagName("horaIn")[0].textContent;
-        }*/
+            let oTabla = document.createElement("table");
+            oTabla.classList.add("table");
+            oTabla.classList.add("datosUsuarios");
+            let oTHead = oTabla.createTHead();
+            let oFila = oTHead.insertRow(-1);
+            let oTH = document.createElement("TH");
+            oTH.textContent = "Reserva";
+            oTH.setAttribute("colspan",2);
+            oFila.appendChild(oTH);
+
+            let oTBody = oTabla.createTBody();
+            oFila = oTBody.insertRow(-1);
+            var oCelda = oFila.insertCell(-1);
+            oCelda.textContent = "Hora Reserva : ";
+            oCelda = oFila.insertCell(-1);
+            oCelda.textContent=oReserva.getElementsByTagName("horaIn")[0].textContent;
+
+            capaDatos.appendChild(oTabla);
+        }
 
     }
 //Cargar pistas desde XML
@@ -751,6 +771,7 @@ function ocultarTodosFormularios() {
     for(let oFor of oFormularios){
         oFor.style.display = "none";
     }
+    document.getElementById("datosUsus").innerHTML="";
 }
 
 //Carga las clase desde el XML
