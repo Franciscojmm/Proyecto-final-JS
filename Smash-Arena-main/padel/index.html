@@ -43,7 +43,8 @@
             </div>
         </nav>
 
-        <div class="formularios">
+        <div class="formularios" style="overflow:hidden;">
+            <div id="datosUsus"></div>
             <!--Formulario Alta Usuario Este ya no esta-->
             <div class="divfrmAltaUsuario">
                 
@@ -135,22 +136,6 @@
                         <span class="input-group-text" id="basic-addon1">Instructor</span>
                         <input type="text" class="form-control idInstructorClase" placeholder="DNI del Instructor" aria-label="ID del Instructor" aria-describedby="basic-addon1">
                     </div>
-                    <input type="button" name="botonEnviar" value="Aceptar" class="btn btn-primary">
-                    <input type="reset" name="botonCancelar" value="Cancelar" class="btn btn-secondary">
-                </form>
-            </div>
-            <!--Formulario Apuntarse a una Clase-->
-            <div class="divfrmApuntarClase">
-                <form name="frmApuntarClase" id="frmApuntarClase">
-                    <legend><b>Apuntarse a una Clase</b></legend>
-                    <hr>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text dniUsuario" id="basic-addon1">ID</span>
-                        <input type="text" class="form-control dniUsuarioApuntarseClase" placeholder="DNI del Usuario" aria-label="DNI del Usuario" aria-describedby="basic-addon1">
-                    </div>
-                    <select class="form-select mb-3" aria-label="Selecciona una Clase" id="comboClasesApuntarseClase" name="comboClasesApuntarseClase">
-                        <option selected value = "nulo">Selecciona una clase...</option>
-                    </select>
                     <input type="button" name="botonEnviar" value="Aceptar" class="btn btn-primary">
                     <input type="reset" name="botonCancelar" value="Cancelar" class="btn btn-secondary">
                 </form>

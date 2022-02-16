@@ -25,14 +25,13 @@ document.getElementById('modificarUsuario').addEventListener("click",mostrarForm
 document.getElementById('altaPista').addEventListener("click",mostrarFormulario,false);
 document.getElementById('alquilarPista').addEventListener("click",mostrarPistas,false);
 document.getElementById('crearClase').addEventListener("click",mostrarFormulario,false);
-document.getElementById('apuntarClase').addEventListener("click",mostrarFormulario,false);
+document.getElementById('apuntarClase').addEventListener("click",mostrarClases,false);
 document.getElementById('listados').addEventListener("click",mostrarFormulario,false);
 //document.getElementById('comboUsuarios').addEventListener("change",mostrarDatosUsuario,false);
 //frmModificarUsuario.botonEnviar.addEventListener("click",modificarUsuario,false);
 frmAltaClases.botonEnviar.addEventListener("click",altaClase,false);
 frmAltaReserva.botonEnviar.addEventListener("click",hacerReserva,false);
 frmAltaPista.botonEnviar.addEventListener("click",altaPista,false);
-frmApuntarClase.botonEnviar.addEventListener("click",apuntarseClase,false);
 frmListados.botonEnviar.addEventListener("click",manejadorListado,false);
 document.getElementById("comboListados").addEventListener("change",mostrarFiltros,false);
 document.getElementById("cerrarSesion").addEventListener("click",cerrarSesion,false);
@@ -48,7 +47,6 @@ cargarUsuarios();
 cargarPistas();
 cargarClases();
 cargarReservas();
-cargarComboClases();
                                         
 function recuperarUsuarios(){
 
@@ -249,7 +247,7 @@ function procesoRespuestaGetPistas(datos, textStatus, jqXHR) {
         var div = document.querySelector("#pistas");
     }
     for(let pista of datos){
-        div.innerHTML+='<div class="col-sm-6"><div class="card"><div class="card-body"><h5 class="card-title">'+pista.nombre_pista+'</h5><p class="card-text">'+pista.Descripcion+'</p><button class="btn btn-primary" value ="'+pista.num_pista+'">Alquilar</a></div></div>';
+        div.innerHTML+='<div class="card" style="margin:auto; width:auto;"><img src="../img/pistapadel.jpg" class="card-img-top" alt="" style="width:23rem"><div class="card-body"><h5 class="card-title">'+pista.nombre_pista+'</h5><p class="card-text">'+pista.Descripcion+'</p><button  value = "'+pista.num_pista+'" class="btn btn-primary">Alquilar</button></div></div>';
     }
     document.querySelector("#pistas").addEventListener("click",mostrarAltaPista);
     console.log(datos);
@@ -413,8 +411,8 @@ function insertarReserva(nomReserva,descripcionReserva,fechaInicio,horaInicio,ho
         success: procesarInsertarReserva    
     });
 }
-function procesarInsertarReserva(jqXHR){
-    alert(jqXHR.responseText);
+function procesarInsertarReserva(datos,textStatus,jqXHR){
+    alert(datos.mensaje);
 }
 //Alta Clase
 function altaClase(){        
@@ -637,6 +635,9 @@ function insertarPista(sNombrePista,iIDPista,sDescripcion){
         });
     });
 }
+function mostrarClases(){
+
+}
 //Apuntarse Clase
 function apuntarseClase() {
     let sDNI = document.querySelector(".dniUsuarioApuntarseClase").value;
@@ -668,9 +669,47 @@ function apuntarseClase() {
     alert(oGestion.apuntarseClase(sDNI,iIDClase));
     }
     else
-    alert(sErrores); //Avisar al profe de que mire su funcion de apuntarse a clase.
+    alert(sErrores);
 }
+function cargarDatosUsuario(){
+    $.get("cargaDatosUsus.php?id='"+datosSesion.contraseña+"'",procesoRespuestaCargaUsus,'XML');
+}
+function procesoRespuestaCargaUsus(datos, textStatus, jqXHR) {
+    console.log(datos);
+    construirDatosUsu(datos);
+}
+function construirDatosUsu(oXML){
 
+       let capaDatos = document.getElementById("datosUsus");
+        oClases = oXML.getElementsByTagName("clase");
+        for(let oCLase of oClases){
+
+            let oTabla = document.createElement("table");
+            oTabla.classList.add("table");
+            //oTabla.classList.add("table-dark");
+            let oTHead = oTabla.createTHead();
+            let oFila = oTHead.insertRow(-1);
+            let oTH = document.createElement("TH");
+            oTH.textContent = "Clase";
+            oTH.setAttribute("colspan",2);
+            oFila.appendChild(oTH);
+
+            let oTBody = oTabla.createTBody();
+            oFila = oTBody.insertRow(-1);
+            var oCelda = oFila.insertCell(-1);
+            oCelda.textContent = "Nombre de la Clase";
+            oCelda = oFila.insertCell(-1);
+            oCelda.textContent=oCLase.getElementsByTagName("nombreClase")[0].textContent;
+
+            capaDatos.appendChild(oTabla);
+        }
+
+        /*oReservas = oXML.getElementsByTagName("reserva");
+        for(let oReserva of oReservas){
+           capaDatos.textContent+=oReserva.getElementsByTagName("horaIn")[0].textContent;
+        }*/
+
+    }
 //Cargar pistas desde XML
 function cargarPistas(){
     //Cargarmos las pista desde el XML
@@ -728,22 +767,6 @@ function cargarClases(){
         let siIdInstructor = oCla.getElementsByTagName("siIdInstructor")[0].textContent;
 
         oGestion.altaClase(new Clase(iIDClase,sNombre,sDescripcion,dtInicio,dtFin,iCapacidad,sTipoActividad,siIdInstructor));
-    }
-}
-
-//Crea el combo de clases para apuntarse a ellas
-function cargarComboClases(){
-    let oCapa = frmApuntarClase.comboClasesApuntarseClase;
-    while(oCapa.hasChildNodes()){
-        oCapa.removeChild(oCapa.firstChild);
-    }
-    oCapa.appendChild(document.createElement("OPTION"))
-    oCapa.lastChild.value = "nulo";
-    oCapa.lastChild.textContent = "Selecciona una clase...";
-    for(let clase of oGestion.aClases){
-        oCapa.appendChild(document.createElement("OPTION"));
-        oCapa.lastChild.value = clase.ID;
-        oCapa.lastChild.textContent = clase.Nombre+" "+clase.Inicio.toLocaleDateString("es-ES")+" "+clase.Inicio.getHours()+"H";
     }
 }
 
