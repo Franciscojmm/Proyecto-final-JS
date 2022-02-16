@@ -304,6 +304,7 @@ function hacerReserva()
 {
     let nomReserva = frmAltaReserva.nombreReserva.value;
     let descripcionReserva = frmAltaReserva.descripcionReserva.value;
+    let fechaInicio = frmAltaReserva.diaReserva.value;
     
     let sErrores="";
     let bValido=true;
@@ -341,6 +342,7 @@ function hacerReserva()
   if(frmAltaReserva.diaReserva.value != "")
   {
   var fechaReserva = new Date(frmAltaReserva.diaReserva.value);
+  
   }
   else
   {
@@ -357,6 +359,9 @@ function hacerReserva()
   fechaReserva.setMinutes(arrayHora[1]);
   var fechaFin = new Date (fechaReserva);
   fechaFin.setHours(fechaReserva.getHours()+1);
+  horaInicio = frmAltaReserva.horaInicioReserva.value;
+  horaFin = fechaFin.getHours()+":"+(fechaFin.getMinutes()<10?'0':'') + fechaFin.getMinutes();
+
   }
   else
   {
@@ -378,8 +383,8 @@ function hacerReserva()
     if(bValido)
     {
         let iIDPista = localStorage.getItem('idpista');
-        let sDNIUsuario = sesionDes.contraseña;
-        insertarReserva(nomReserva,descripcionReserva,fechaReserva,fechaFin,iIDPista,sDNIUsuario);
+        let sDNIUsuario = datosSesion.contraseña;
+        insertarReserva(nomReserva,descripcionReserva,fechaInicio,horaInicio,horaFin,iIDPista,sDNIUsuario);
         // Todo fue correcto borramos los datos.
         frmAltaReserva.reset(); 
         ocultarTodosFormularios();
@@ -389,8 +394,27 @@ function hacerReserva()
     }
 
 }
-function insertarReserva(nomReserva,descripcionReserva,fechaReserva,fechaFin,iIDPista,sDNIUsuario){
-    
+function insertarReserva(nomReserva,descripcionReserva,fechaInicio,horaInicio,horaFin,iIDPista,sDNIUsuario){
+    console.log(fechaInicio);
+    console.log(horaInicio);
+    console.log(horaFin);
+    $.ajax({
+        url:"./insertarReserva.php",
+        method: "POST",
+        data: { nombre: nomReserva,
+                descripcion: descripcionReserva,
+                fecha: fechaInicio,
+                horaInicio: horaInicio,
+                horaFin: horaFin,
+                idPista: iIDPista,
+                dni: sDNIUsuario 
+            },
+        dataType: 'json',
+        success: procesarInsertarReserva    
+    });
+}
+function procesarInsertarReserva(jqXHR){
+    alert(jqXHR.responseText);
 }
 //Alta Clase
 function altaClase(){        
