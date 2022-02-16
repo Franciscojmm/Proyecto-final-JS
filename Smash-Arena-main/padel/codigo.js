@@ -16,13 +16,14 @@ function obtenerDatosLogin(){
     
     return sesionDes
 }
+var datosSesion = obtenerDatosLogin();
 // Hasta aquí.
 
 //Añadir eventos , si se cargan de forma dinamica quitar de aquí para evitar errores de referencia antes de cargar.
 document.getElementById('altaUsuario').addEventListener("click",mostrarFormulario,false);
 document.getElementById('modificarUsuario').addEventListener("click",mostrarFormulario,false);
 document.getElementById('altaPista').addEventListener("click",mostrarFormulario,false);
-document.getElementById('alquilarPista').addEventListener("click",mostrarFormulario,false);
+document.getElementById('alquilarPista').addEventListener("click",mostrarPistas,false);
 document.getElementById('crearClase').addEventListener("click",mostrarFormulario,false);
 document.getElementById('apuntarClase').addEventListener("click",mostrarFormulario,false);
 document.getElementById('listados').addEventListener("click",mostrarFormulario,false);
@@ -47,7 +48,6 @@ cargarUsuarios();
 cargarPistas();
 cargarClases();
 cargarReservas();
-cargarComboPistas();
 cargarComboClases();
                                         
 function recuperarUsuarios(){
@@ -233,8 +233,42 @@ function procesoRespuestaUpdateUsuario(){
         alert("Modificar Ok");
     }
 }
+function mostrarPistas(){
+    $.get("mostrarPistas.php",procesoRespuestaGetPistas,'json');
+}
+function procesoRespuestaGetPistas(datos, textStatus, jqXHR) {
+    let oCapa=document.querySelector(".formularios");
+    if(document.querySelector("#pistas")==null){
+        var div = document.createElement("div");
+        div.classList.add("row");
+        div.id="pistas";
+        oCapa.appendChild(div);
+    }else {
+        ocultarTodosFormularios();
+        document.querySelector("#pistas").innerHTML="";
+        var div = document.querySelector("#pistas");
+    }
+    for(let pista of datos){
+        div.innerHTML+='<div class="col-sm-6"><div class="card"><div class="card-body"><h5 class="card-title">'+pista.nombre_pista+'</h5><p class="card-text">'+pista.Descripcion+'</p><button class="btn btn-primary" value ="'+pista.num_pista+'">Alquilar</a></div></div>';
+    }
+    document.querySelector("#pistas").addEventListener("click",mostrarAltaPista);
+    console.log(datos);
+}
+function mostrarAltaPista(oEvento){
+    oE = oEvento || window.event;
+    console.log(oE.target);
+    if(oE.target.nodeName=='BUTTON'){
+        let oCapa = document.querySelector("#pistas");
+        oCapa.innerHTML="";
+        document.querySelector("#frmAltaReserva").style.display="block";
+        let iIDPista = oE.target.value;
+        localStorage.setItem('idpista',iIDPista);
+    }
 
+}
 function mostrarFormulario(oE){
+    if(document.querySelector("#pistas")!=null)
+    document.querySelector("#pistas").innerHTML="";
     oEvento = oE || window.event;
     oFormulario = oEvento.srcElement;
     let idForm = oFormulario.dataset.formu;
@@ -268,7 +302,6 @@ function borrarTabla() {
 //Reservar Pista
 function hacerReserva()
 {
-    let idReserva = frmAltaReserva.idReserva.value;
     let nomReserva = frmAltaReserva.nombreReserva.value;
     let descripcionReserva = frmAltaReserva.descripcionReserva.value;
     
@@ -277,27 +310,11 @@ function hacerReserva()
     //Control de errores antes de crear el objeto.
     let hoy = fechaHoy();
 
-
-
-    
-   let oExpReg = /^\d{8}[a-zA-Z]{1}$/; 
-    if(!validaFormularios(idReserva,oExpReg))
-    {
-        bValido=false;
-        frmAltaReserva.idReserva.classList.add("error");
-        sErrores += "El DNI no tiene el formato correcto\n";
-        frmAltaReserva.idReserva.focus();
-
-    }
-    else
-        frmAltaReserva.idReserva.classList.remove("error");
-
-
-     oExpReg = /^[\s\w]{4,40}$/; 
+    let oExpReg = /^[\s\w]{4,40}$/; 
     if(!validaFormularios(nomReserva,oExpReg))
     {
         if(bValido)
-        frmAltaReserva.idReserva.focus();
+        frmAltaReserva.nombreReserva.focus();
         
         bValido=false;
         frmAltaReserva.nombreReserva.classList.add("error");
@@ -306,7 +323,7 @@ function hacerReserva()
     else
     frmAltaReserva.nombreReserva.classList.remove("error");
 
-
+    oExpReg = /^[\s\w]{4,40}$/; 
     if(!validaFormularios(descripcionReserva,oExpReg))
     {
         if(bValido)
@@ -358,22 +375,11 @@ function hacerReserva()
         sErrores += "La fecha seleccionada es inferior a la actual.\n";
         bValido = false;
     }
-
-    let pistaSelecionada = frmAltaReserva.comboPistas.value;
-    if(frmAltaReserva.comboPistas.selectedIndex == 0)
-    {
-        bValido=false;
-        sErrores += "Debe seleccionar una pista.";
-    
-    }
-
-
     if(bValido)
     {
-        oReserva = new Reserva(nomReserva,descripcionReserva,fechaReserva,fechaFin,pistaSelecionada,idReserva);
-        console.log(oReserva);
-
-        alert(oGestion.altaReserva(oReserva));
+        let iIDPista = localStorage.getItem('idpista');
+        let sDNIUsuario = sesionDes.contraseña;
+        insertarReserva(nomReserva,descripcionReserva,fechaReserva,fechaFin,iIDPista,sDNIUsuario);
         // Todo fue correcto borramos los datos.
         frmAltaReserva.reset(); 
         ocultarTodosFormularios();
@@ -383,7 +389,9 @@ function hacerReserva()
     }
 
 }
-
+function insertarReserva(nomReserva,descripcionReserva,fechaReserva,fechaFin,iIDPista,sDNIUsuario){
+    
+}
 //Alta Clase
 function altaClase(){        
     let sNombreClase = document.querySelector(".nombreClase").value;     
@@ -680,23 +688,6 @@ function ocultarTodosFormularios() {
     for(let oFor of oFormularios){
         oFor.style.display = "none";
     }
-}
-
-//Crea el combo de pistas para alquilarlas 
-function cargarComboPistas() {
-    let oCapa = document.getElementById("comboPistas");
-    while(oCapa.hasChildNodes()){
-        oCapa.removeChild(oCapa.firstChild);
-    }
-    oCapa.appendChild(document.createElement("OPTION"))
-    oCapa.lastChild.value = "nulo";
-    oCapa.lastChild.textContent = "Selecciona una pista..."
-    for (oPista of oGestion.aPistas){
-        oCapa.appendChild(document.createElement("OPTION"));
-        oCapa.lastChild.value = oPista.id;
-        oCapa.lastChild.textContent = oPista.nombre;
-    }
-    
 }
 
 //Carga las clase desde el XML
