@@ -13,7 +13,7 @@
 
     //Consulta a clases_usuarios.
     $sql = "SELECT c.id as idClase, c.nombre as nombreClase ,c.descripcion, c.capacidad ,c.tipo_actividad,u.nombre as instructor,c.fecha_inicio,c.hora_inicio FROM clases_usuarios INNER JOIN clase as c ON id_clase=c.id INNER JOIN usuarios as u ON c.dni_instructor=u.dni 
-    WHERE clases_usuarios.dni_usuario=".$dni;
+    WHERE clases_usuarios.dni_usuario=$dni order by c.fecha_inicio,c.hora_inicio";
 
     $resultados = mysqli_query($conexion,$sql) or die(mysqli_error($conexion));
 
@@ -36,7 +36,7 @@ $XML.="</Clases>";
 
 //Consulta a reservas.
 $sql = "SELECT r.id_pista,p.nombre_pista,r.nombre as nombreReserva, r.dia_reserva,r.hora_inicio,r.hora_fin,r.descripcion FROM reserva as r 
-INNER JOIN pista as p on r.id_pista=p.num_pista where r.dni_usuario=".$dni;
+INNER JOIN pista as p on r.id_pista=p.num_pista where r.dni_usuario=$dni order by r.dia_reserva,r.hora_inicio";
 
 $resultados = mysqli_query($conexion,$sql) or die(mysqli_error($conexion));
 

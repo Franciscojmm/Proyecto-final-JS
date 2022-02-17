@@ -690,6 +690,7 @@ function construirDatosUsu(oXML){
             let oTabla = document.createElement("table");
             oTabla.classList.add("table");
             oTabla.classList.add("datosUsuarios");
+            oTabla.classList.add("table-info");
             let oTHead = oTabla.createTHead();
             let oFila = oTHead.insertRow(-1);
             let oTH = document.createElement("TH");
@@ -712,6 +713,7 @@ function construirDatosUsu(oXML){
             let oTabla = document.createElement("table");
             oTabla.classList.add("table");
             oTabla.classList.add("datosUsuarios");
+            oTabla.classList.add("table-success");
             let oTHead = oTabla.createTHead();
             let oFila = oTHead.insertRow(-1);
             let oTH = document.createElement("TH");
