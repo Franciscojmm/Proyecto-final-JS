@@ -671,7 +671,13 @@ function mostrarClases(){
     $.get("mostrarClases.php",procesoRespuestaGetClases,'json');
 }
 function procesoRespuestaGetClases(datos, textStatus, jqXHR){
-    
+    console.log(datos);
+    let oTabla = "<table class='table'><tr><th>Nombre</th><th>Descripcion</th><th>Capacidad</th><th>Actividad</th><th>Fecha</th><th>Hora</th></tr>";
+    for(let c of datos){
+        oTabla+="<tr><td>"+c.nombre+"</td><td>"+c.descripcion+"</td><td>"+c.capacidad+"</td><td>"+c.tipo_actividad+"</td><td>"+c.fecha_inicio+"</td><td>"+c.hora_inicio+"</td></tr>";
+    }
+    oTabla+="</table>";
+    document.querySelector("#clases").innerHTML=oTabla;
 }
 //Apuntarse Clase
 function apuntarseClase() {
@@ -773,7 +779,7 @@ function construirDatosUsu(oXML){
 
     }
 
-    function llenaTablas(cuerpo , objeto , dato , mensaje){
+function llenaTablas(cuerpo , objeto , dato , mensaje){
         let oFila = cuerpo.insertRow(-1);
 
         let oCelda = oFila.insertCell(-1);

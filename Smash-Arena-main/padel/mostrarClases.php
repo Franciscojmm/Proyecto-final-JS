@@ -8,7 +8,7 @@
     $conexion = mysqli_connect($servidor, $usuario, $password,$basedatos) or die(mysqli_error($conexion));
 
     // Consulta SQL para obtener los datos de los actores.
-    $sql = "select * from clases";
+    $sql = "select * from clase";
     $resultados = mysqli_query($conexion,$sql) or die(mysqli_error($conexion));
     
     while ($fila = mysqli_fetch_assoc($resultados)) {
