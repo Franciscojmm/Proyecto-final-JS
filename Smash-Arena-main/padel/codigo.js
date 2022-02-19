@@ -259,6 +259,8 @@ function mostrarPistas(){
 }
 function procesoRespuestaGetPistas(datos, textStatus, jqXHR) {
     let oCapa=document.querySelector(".formularios");
+    document.querySelector("#datosUsus").innerHTML="";
+    document.querySelector("#clases").innerHTML="";
     if(document.querySelector("#pistas")==null){
         var div = document.createElement("div");
         div.classList.add("row");
@@ -661,7 +663,14 @@ function insertarPista(sNombrePista,iIDPista,sDescripcion){
     });
 }
 function mostrarClases(){
-
+    document.querySelector("#datosUsus").innerHTML="";
+    if(document.querySelector("#pistas")!=null)
+    document.querySelector("#pistas").innerHTML="";
+    ocultarTodosFormularios();
+    $.get("mostrarClases.php",procesoRespuestaGetClases,'json');
+}
+function procesoRespuestaGetClases(datos, textStatus, jqXHR){
+    
 }
 //Apuntarse Clase
 function apuntarseClase() {
