@@ -147,13 +147,22 @@ legend {
     margin: 2rem !important;
     width: auto !important;
     border: solid;
+    height: fit-content;
 }
-
+/*
 #datosUsus{
     display: grid;
-    grid-template-columns: repeat(3,1fr);
-}
+    grid-template-columns: repeat(4,1fr);
+}*/
 
 .tableClases{
     background-color: aquamarine;
+}
+.dat-clases{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+}
+.dat-reservas{
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
 }

@@ -44,9 +44,17 @@
         </nav>
 
         <div class="formularios" style="overflow:hidden;">
-            <!-- Datos de usuarios.-->
+            <!-- Datos de usuarios. Se generan dos columnas con tablas a partir de un XML-->
             <div id="datosUsus" >
+                <h4 style="text-align: center;">Sus Actividades :</h4>
+                <div class="row">
+                    <div class="col dat-clases">
 
+                    </div>
+                    <div class="col dat-reservas">
+                        
+                    </div>
+                </div>
             </div>
             <!--Formulario Alta Usuario Este ya no esta-->
             <div class="divfrmAltaUsuario">
@@ -150,15 +158,14 @@
                     <hr>
                     <select class="form-select mb-3" aria-label="Selecciona un Listado" id="comboListados">
                         <option value="nulo">Selecciona un listado...</option>
-                        <option value="usuarios">Listado de Usuarios</option>
-                        <option value="pistas">Listado de Pistas</option>
-                        <option value="clases">Listado de Clases</option>
-                        <option value="reservas">Listado de Reservas entre dos fechas</option>
-                        <option value="buscarUsuarioPorDNI">Buscar usuario por DNI</option>
+                        
                     </select>
                     <input type="button" name="botonEnviar" value="Aceptar" class="btn btn-primary">
                 </form>
             </div>
+        </div>
+        <div id="resuls">
+            
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>

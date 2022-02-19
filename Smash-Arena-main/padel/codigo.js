@@ -1,23 +1,42 @@
-//Obtener el usuario ver de que tipo es y mostrar solo las acciones disponibles para cada tipo de usuario.
+
+//Si no se ha realizado el login se manda a la página de login.
+if(localStorage.getItem("session") == null)
+{
+    alert("Debe logearse antes de acceder a nuestra web.");
+    window.location="../login/login.html";
+}
+else
+var datosSesion = obtenerDatosLogin();
+
+//Para coger los datos del usuario.
 function obtenerDatosLogin(){
     let sesion = CryptoJS.AES.decrypt(localStorage.getItem("session"),"clave");
     let sesionDes = JSON.parse(sesion.toString(CryptoJS.enc.Utf8));
     
     return sesionDes
 }
-var datosSesion = obtenerDatosLogin();
-
+//Obtener el usuario ver de que tipo es y mostrar solo las acciones disponibles para cada tipo de usuario.
 if(obtenerDatosLogin().tipoUsu == "admin")
 {//Solo se mostraran las opciones de los admin.
     document.getElementById("altaUsuario").style.display="none";
     document.getElementById("alquilarPista").style.display="none";
     document.getElementById("apuntarClase").style.display="none";
+    cargaListadosOps("usuAdmin");
 }else{
     document.getElementById("altaUsuario").style.display="none";
     document.getElementById("modificarUsuario").style.display="none";
     document.getElementById("altaPista").style.display="none";
     document.getElementById("crearClase").style.display="none";
+    cargaListadosOps("usuEst");
     cargarDatosUsuario();
+}
+
+function cargaListadosOps(usu){
+    if(usu=="usuEst")
+    document.getElementById("comboListados").innerHTML+='<option value="clases">Listado de Clases</option><option value="reservas">Listado de Reservas entre dos fechas</option>';
+
+    else
+    document.getElementById("comboListados").innerHTML+='<option value="usuarios">Listado de Usuarios</option><option value="pistas">Listado de Pistas</option><option value="buscarUsuarioPorDNI">Buscar usuario por DNI</option>';
 }
 
 // Hasta aquí.
@@ -235,6 +254,7 @@ function procesoRespuestaUpdateUsuario(){
     }
 }
 function mostrarPistas(){
+    ocultarTodosFormularios();
     $.get("mostrarPistas.php",procesoRespuestaGetPistas,'json');
 }
 function procesoRespuestaGetPistas(datos, textStatus, jqXHR) {
@@ -268,6 +288,7 @@ function mostrarAltaPista(oEvento){
 
 }
 function mostrarFormulario(oE){
+    ocultarTodosFormularios();
     if(document.querySelector("#pistas")!=null)
     document.querySelector("#pistas").innerHTML="";
     oEvento = oE || window.event;
@@ -610,6 +631,7 @@ function altaPista(){
 
     if(bValido)
     {
+
         insertarPista(sNombrePista,iIDPista,sDescripcion);
     }
     else{
@@ -683,8 +705,9 @@ function procesoRespuestaCargaUsus(datos, textStatus, jqXHR) {
 }
 function construirDatosUsu(oXML){
 
-       let capaDatos = document.getElementById("datosUsus");
+       let capaDatos = document.querySelector(".dat-clases");
         oClases = oXML.getElementsByTagName("clase");
+        //capaDatos.innerHTML="<h4>Sus Clases :</h4><br>"
         for(let oCLase of oClases){
 
             let oTabla = document.createElement("table");
@@ -699,16 +722,20 @@ function construirDatosUsu(oXML){
             oFila.appendChild(oTH);
 
             let oTBody = oTabla.createTBody();
-            oFila = oTBody.insertRow(-1);
-            var oCelda = oFila.insertCell(-1);
-            oCelda.textContent = "Nombre de la Clase :";
-            oCelda = oFila.insertCell(-1);
-            oCelda.textContent=oCLase.getElementsByTagName("nombreClase")[0].textContent;
+
+            llenaTablas(oTBody,oCLase,"nombreClase", "Clase :");
+            llenaTablas(oTBody,oCLase,"descripcion", "Descripción :");
+            llenaTablas(oTBody,oCLase,"capacidad", "Capacidad :");
+            llenaTablas(oTBody,oCLase,"tipoActividad", "Actividad :");
+            llenaTablas(oTBody,oCLase,"instructor", "Instructor :");
+            llenaTablas(oTBody,oCLase,"fechaIn", "Fechan Inicio :");
+            llenaTablas(oTBody,oCLase,"horaIn", "Hora Inicio :");
 
             capaDatos.appendChild(oTabla);
         }
-
+        capaDatos = document.querySelector(".dat-reservas");
         oReservas = oXML.getElementsByTagName("reserva");
+        //capaDatos.innerHTML="<h4>Sus Reservas :</h4><br>";
         for(let oReserva of oReservas){
             let oTabla = document.createElement("table");
             oTabla.classList.add("table");
@@ -723,15 +750,28 @@ function construirDatosUsu(oXML){
 
             let oTBody = oTabla.createTBody();
             oFila = oTBody.insertRow(-1);
-            var oCelda = oFila.insertCell(-1);
-            oCelda.textContent = "Hora Reserva : ";
-            oCelda = oFila.insertCell(-1);
-            oCelda.textContent=oReserva.getElementsByTagName("horaIn")[0].textContent;
+
+            llenaTablas(oTBody,oReserva,"nombrePista", "Nombre Pista :");
+            llenaTablas(oTBody,oReserva,"nombreReserva", "Nombre Reserva :");
+            llenaTablas(oTBody,oReserva,"diaReserva", "Dia de la reserva :");
+            llenaTablas(oTBody,oReserva,"horaIn", "Hora Inicio :");
+            llenaTablas(oTBody,oReserva,"horaFin", "Hora Fin :");
+            llenaTablas(oTBody,oReserva,"descripcion", "Descripción :");
 
             capaDatos.appendChild(oTabla);
         }
 
     }
+
+    function llenaTablas(cuerpo , objeto , dato , mensaje){
+        let oFila = cuerpo.insertRow(-1);
+
+        let oCelda = oFila.insertCell(-1);
+        oCelda.innerHTML = "<b>"+mensaje+"</b>";
+        oCelda = oFila.insertCell(-1);
+        oCelda.textContent=objeto.getElementsByTagName(dato)[0].textContent;
+    }
+
 //Cargar pistas desde XML
 function cargarPistas(){
     //Cargarmos las pista desde el XML
@@ -774,6 +814,7 @@ function ocultarTodosFormularios() {
         oFor.style.display = "none";
     }
     document.getElementById("datosUsus").innerHTML="";
+    document.getElementById("resuls").innerHTML="";
 }
 
 //Carga las clase desde el XML
@@ -842,95 +883,45 @@ function manejadorListado(){
 
 //Listado de usuarios
 function listadoUsuarios(){
-    let oTabla = document.createElement("table");
-    let oCapa = document.querySelector(".formularios");
-    let oTH = document.createElement("th");
-    let oUsuarios = oGestion.usuarios;
 
-    oTabla.classList.add("table");
-  
-
-    let cabecera = oTabla.createTHead();
-
-
-    let filaCabecera = cabecera.insertRow(-1);
-    let celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "DNI";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Nombre Completo";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Edad";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Sexo";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Es Instructor";
-
-    let cuerpo = oTabla.createTBody();
-
-    for(let oUsu of oUsuarios){
-        let filaCuerpo = cuerpo.insertRow(-1);
-        let celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oUsu.DNI;
-
-        celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oUsu.NombreAp;
-
-        celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oUsu.Edad;
-
-        celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oUsu.Sexo?"Masculino":"Femenino";
-
-        celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oUsu.EsInstructor?"Si":"No";
-
-    }
-    oCapa.appendChild(oTabla);
+    $.get("listadoUsus.php",procesoRespuestaGetUsus,'json');
     frmListados.reset();
-  
+}
+
+function procesoRespuestaGetUsus(data)
+{
+    let color="";
+    let tabla = "<table border='1' class='table'>";
+    tabla += "<th>DNI</th><th>NOMBRE</th><th>EDAD</th><th>SEXO</th><th>ADMIN</th><th>INSTRUCTOR</th>";
+    for(let oUsu of data){
+        if(oUsu.admin == 1)
+            color = '#F0F3A0';
+        else{
+            if(oUsu.instruc == 'S')
+            color = '#A3E4D7';
+            else
+            color = '#EDBB99';
+        }
+        tabla+="<tr style='background-color:"+color+"'> <td>"+oUsu.dni+"</td>  <td>"+oUsu.nombre+"</td>  <td>"+oUsu.edad+"</td>  <td>"+oUsu.sexo+"</td>   <td>"+oUsu.admin+"</td>   <td>"+oUsu.instruc+"</td>  </tr>"
+    }
+    tabla+="<table>";
+    document.getElementById("resuls").innerHTML=tabla;
 }
 
 //listadoPistas
 function listadoPistas(){
-    let oTabla = document.createElement("table");
-    let oCapa = document.querySelector(".formularios");
-    let oTH = document.createElement("th");
-    let oPistas = oGestion.pistas;
-
-    oTabla.classList.add("table");
-  
-
-    let cabecera = oTabla.createTHead();
-
-
-    let filaCabecera = cabecera.insertRow(-1);
-    let celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "ID";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Nombre";
-
-    let cuerpo = oTabla.createTBody();
-
-    for(oPis of oPistas){
-        let filaCuerpo = cuerpo.insertRow(-1);
-        let celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oPis.id;
-
-        celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oPis.nombre;
-    }
-    oCapa.appendChild(oTabla);
+    $.get("listadoPistas.php",procesoRespuestaGetPistas,'json');
     frmListados.reset();
+}
+function procesoRespuestaGetPistas(data)
+{
+    let tabla = "<table border='1' class='table'>";
+    tabla += "<th>NUMERO PISTA</th><th>NOMBRE</th><th>DESCRIPCION</th>";
+    for(let oPista of data){
+        tabla+="<tr> <td>"+oPista.num_pista+"</td>  <td>"+oPista.nombre_pista+"</td>  <td>"+oPista.descripcion+"</td> </tr>"
+    }
+    tabla+="<table>";
+    document.getElementById("resuls").innerHTML=tabla;
 }
 
 //listadoClase
@@ -1115,58 +1106,7 @@ function listadoReserva(){
 //listado de un usuario buscado por un DNI 
 function listadoBuscarUsuario(){
     let sDNI  = document.querySelector("#iDNIBuscar").value;
-    let oTabla = document.createElement("table");
-    let oCapa = document.querySelector(".formularios");
-    let oTH = document.createElement("th");
-    let oUsu = oGestion.buscarUsuario(sDNI);
-    if(oUsu == null){
-        alert("Debes introducir un DNI correcto");
-    }else {
-    oTabla.classList.add("table");
-  
-
-    let cabecera = oTabla.createTHead();
-
-
-    let filaCabecera = cabecera.insertRow(-1);
-    let celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "DNI";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Nombre Completo";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Edad";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Sexo";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Es Instructor";
-
-    let cuerpo = oTabla.createTBody();
-    let filaCuerpo = cuerpo.insertRow(-1);
-    let celdaCuerpo = filaCuerpo.insertCell(-1);
-    celdaCuerpo.textContent = oUsu.DNI;
-
-    celdaCuerpo = filaCuerpo.insertCell(-1);
-    celdaCuerpo.textContent = oUsu.NombreAp;
-
-    celdaCuerpo = filaCuerpo.insertCell(-1);
-    celdaCuerpo.textContent = oUsu.Edad;
-
-    celdaCuerpo = filaCuerpo.insertCell(-1);
-    celdaCuerpo.textContent = oUsu.Sexo?"Masculino":"Femenino";
-
-    celdaCuerpo = filaCuerpo.insertCell(-1);
-    celdaCuerpo.textContent = oUsu.EsInstructor?"Si":"No";
-    oCapa.appendChild(oTabla);
-    }
-    frmListados.reset();
+    $.get("listadoUsus.php?dni="+sDNI,procesoRespuestaGetUsus,'json');
     mostrarFiltros();
 }
 

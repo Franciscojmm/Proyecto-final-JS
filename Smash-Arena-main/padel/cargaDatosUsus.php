@@ -34,6 +34,7 @@
 $XML.="</Clases>";
 
 
+
 //Consulta a reservas.
 $sql = "SELECT r.id_pista,p.nombre_pista,r.nombre as nombreReserva, r.dia_reserva,r.hora_inicio,r.hora_fin,r.descripcion FROM reserva as r 
 INNER JOIN pista as p on r.id_pista=p.num_pista where r.dni_usuario=$dni order by r.dia_reserva,r.hora_inicio";
@@ -50,11 +51,10 @@ $resultados = mysqli_query($conexion,$sql) or die(mysqli_error($conexion));
         $XML .='<diaReserva>'.$dia_reserva.'</diaReserva>';
         $XML .='<horaIn>'.$hora_inicio.'</horaIn>';
         $XML .='<horaFin>'.$hora_fin.'</horaFin>';
-        $XML .='<descricion>'.$descripcion.'</descricion>';
+        $XML .='<descripcion>'.$descripcion.'</descripcion>';
     $XML .='</reserva>';
 }
 $XML.="</Reservas>";
-
 
     mysqli_close($conexion);
     // función de PHP que convierte a formato JSON el array.
