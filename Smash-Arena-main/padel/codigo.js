@@ -21,6 +21,7 @@ if(obtenerDatosLogin().tipoUsu == "admin")
     document.getElementById("altaUsuario").style.display="none";
     document.getElementById("alquilarPista").style.display="none";
     document.getElementById("apuntarClase").style.display="none";
+    document.getElementById("datosUsus").style.display="none";
     cargaListadosOps("usuAdmin");
 }else{
     document.getElementById("altaUsuario").style.display="none";
