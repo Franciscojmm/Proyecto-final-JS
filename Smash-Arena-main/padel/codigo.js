@@ -910,10 +910,10 @@ function procesoRespuestaGetUsus(data)
 
 //listadoPistas
 function listadoPistas(){
-    $.get("listadoPistas.php",procesoRespuestaGetPistas,'json');
+    $.get("listadoPistas.php",procesoRespuestaGetListaPistas,'json');
     frmListados.reset();
 }
-function procesoRespuestaGetPistas(data)
+function procesoRespuestaGetListaPistas(data)
 {
     let tabla = "<table border='1' class='table'>";
     tabla += "<th>NUMERO PISTA</th><th>NOMBRE</th><th>DESCRIPCION</th>";
