@@ -963,7 +963,7 @@ function procesoRespuestaGetListaPistas(data)
 function listadoClase(){
     frmLlamadaClases.reset();
 
-   $("#frmLlamadaClases").show();    
+   document.getElementById("frmLlamadaClases").style="display:block";    
 
     if(sessionStorage.getItem("combos")==null) // Solo los carga si no estan cargados antes.
     {
