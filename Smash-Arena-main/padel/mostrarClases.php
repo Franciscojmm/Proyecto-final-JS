@@ -5,6 +5,8 @@
     $usuario   = "root";
     $password  = "";
     // Creamos la conexión al servidor.
+    $contador=0;
+    extract($_GET);
     $conexion = mysqli_connect($servidor, $usuario, $password,$basedatos) or die(mysqli_error($conexion));
 
     // Consulta SQL para obtener los datos de los actores.
@@ -14,6 +16,16 @@
     while ($fila = mysqli_fetch_assoc($resultados)) {
         // Almacenamos en un array cada una de las filas que vamos leyendo del recordset.
         $datos[] = $fila;
+        extract($fila);
+        $sql2 = "select count(dni_usuario) as contador from clases_usuarios WHERE dni_usuario='$dni' AND id_clase=$id";
+        $resultados2 = mysqli_query($conexion,$sql2) or die(mysqli_error($conexion));
+        $resultado= mysqli_fetch_assoc($resultados2);
+        if($resultado['contador']==1){
+            $datos[$contador]["estaClase"]=true;
+        }else {
+            $datos[$contador]["estaClase"]=false;
+        }
+        $contador++;
     }
     mysqli_close($conexion);
 

@@ -63,6 +63,7 @@ document.getElementById("cerrarSesion").addEventListener("click",cerrarSesion,fa
 //Creamos el objeto gestion y despues cargamos el documento XML
 var oGestion = new Gestion();
 var oXML = loadXMLDoc("xmlSMASH-ARENA.xml");
+var oTabla="";
 
 
 //Llamada a todas las funciones principales
@@ -668,17 +669,33 @@ function mostrarClases(){
     if(document.querySelector("#pistas")!=null)
     document.querySelector("#pistas").innerHTML="";
     ocultarTodosFormularios();
-    $.get("mostrarClases.php",procesoRespuestaGetClases,'json');
+    $.get("mostrarClases.php?dni="+datosSesion.contraseña,procesoRespuestaGetClases,'json');
 }
 function procesoRespuestaGetClases(datos, textStatus, jqXHR){
     console.log(datos);
-    let oTabla = "<table class='table'><tr><th>Nombre</th><th>Descripcion</th><th>Capacidad</th><th>Actividad</th><th>Fecha</th><th>Hora</th></tr>";
+    oTabla = "<table class='table'><tr><th>Nombre</th><th>Descripcion</th><th>Capacidad</th><th>Actividad</th><th>Fecha</th><th>Hora</th><th>Opcion</th><tr>";
     for(let c of datos){
-        oTabla+="<tr><td>"+c.nombre+"</td><td>"+c.descripcion+"</td><td>"+c.capacidad+"</td><td>"+c.tipo_actividad+"</td><td>"+c.fecha_inicio+"</td><td>"+c.hora_inicio+"</td></tr>";
+        oTabla+="<tr><td>"+c.nombre+"</td><td>"+c.descripcion+"</td><td>"+c.capacidad+"</td><td>"+c.tipo_actividad+"</td><td>"+c.fecha_inicio+"</td><td>"+c.hora_inicio+"</td>";
+        if(c.estaClase==true){
+            oTabla+="<td><button data-dni="+datosSesion.contraseña+" data-clase="+c.id+" value='cancelar'>Cancelar Clase</td></tr>";
+        }else {
+            oTabla+="<td><button data-dni="+datosSesion.contraseña+" data-clase="+c.id+" value='apuntarse'>Apuntarse Clase</td></tr>";
+        }    
     }
-    oTabla+="</table>";
     document.querySelector("#clases").innerHTML=oTabla;
 }
+/*function estaApuntadoClase(sDNI,IDClase){
+    $.get("getEstaApuntadoClase.php?dni="+sDNI+"&clase="+IDClase,procesoGetEstaApuntadoClase,'text');
+}
+function procesoGetEstaApuntadoClase(datos, textStatus, jqXHR){
+    console.log(datos);
+    if(datos==true){
+        oTabla+="<td><button data-dni="+datosSesion.contraseña+" data-clase="+localStorage.getItem('clase')+" value='cancelar'>Cancelar Clase</td></tr>";
+    }else {
+        oTabla+="<td><button data-dni="+datosSesion.contraseña+" data-clase="+localStorage.getItem('clase')+" value='apuntarse'>Apuntarse Clase</td></tr>";
+    }
+
+}*/
 //Apuntarse Clase
 function apuntarseClase() {
     let sDNI = document.querySelector(".dniUsuarioApuntarseClase").value;
@@ -777,7 +794,7 @@ function construirDatosUsu(oXML){
             capaDatos.appendChild(oTabla);
         }
 
-    }
+}
 
 function llenaTablas(cuerpo , objeto , dato , mensaje){
         let oFila = cuerpo.insertRow(-1);
@@ -786,7 +803,7 @@ function llenaTablas(cuerpo , objeto , dato , mensaje){
         oCelda.innerHTML = "<b>"+mensaje+"</b>";
         oCelda = oFila.insertCell(-1);
         oCelda.textContent=objeto.getElementsByTagName(dato)[0].textContent;
-    }
+}
 
 //Cargar pistas desde XML
 function cargarPistas(){
