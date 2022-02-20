@@ -1004,9 +1004,10 @@ function filtrarBusquedaClases(){
         alert("Debe rellenar las fechas de busqueda.");
         else{
             $.getJSON("busquedaClases.php",{usu : datosSesion.contraseña, diaIn : diaIn , diaFin: diaFin , instructor : instructorBus , acti : actividadBus},function(result){
-                oTabla = "<table class='table'><tr><th>Nombre</th><th>Descripcion</th><th>Capacidad</th><th>Actividad</th><th>Fecha</th><th>Hora</th><th>Opcion</th></tr>";
+                console.log(result);
+                oTabla = "<table class='table table-striped table-dark table-bordered'><tr class='table-info'><th>Nombre</th><th>Descripcion</th><th>Capacidad</th><th>Instructor</th><th>Actividad</th><th>Fecha</th><th>Hora</th></tr>";
                for(let clase of result)
-               oTabla += "<td>"+clase.nombre+"</td>";
+               oTabla += "<tr><td>"+clase.nombre+"</td> <td>"+clase.descripcion+"</td> <td>"+clase.capacidad+"</td>  <td>"+clase.instructor+"</td>  <td>"+clase.tipo_actividad+"</td> <td>"+clase.fecha_inicio+"</td>  <td>"+clase.hora_inicio+"</td></tr>";
 
                oTabla+="</table>";
 
