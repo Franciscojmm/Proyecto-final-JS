@@ -39,6 +39,20 @@ function registroUsu(){
             let iEdad = document.querySelector(".Edad").value;     
             let bSexo;
             let bInstructor;
+            let bValido = true;
+            let sErrores="";
+
+
+    let  oExpReg = /^\d{8}[a-zA-Z]{1}$/; 
+    if(!oExpReg.test(sDNI))
+    {
+        document.querySelector(".dniUsuario").focus();
+        bValido=false;
+        document.querySelector(".dniUsuario").classList.add("error");
+        sErrores += "El DNI no tiene el formato correcto\n";
+    }
+    else
+    document.querySelector(".dniUsuario").classList.remove("error");
 
             if(document.getElementById('radioSexoHombreAltaUsuario').checked){
                 bSexo=true;
@@ -55,11 +69,14 @@ function registroUsu(){
             /*oAjax.open("GET", encodeURI("../compruebaUsuario.php?" + sParametros)); //Cambiar a POST los insert son con POST.
             oAjax.addEventListener("readystatechange", procesoRespuestaInsercion, false);
             oAjax.send();*/
-
+            
+            if(bValido)
             $.post("../compruebaUsuario.php",   // URL
                 sParametros,               // Parámetros (ninguno en este caso)
                 procesoRespuestaInsercion,  // Callback
                 "text");            // Tipo de respuesta del servidor
+            else
+            alert(sErrores);    
 }
 
 function comprobarUsuario(nombreUsu,contra) {

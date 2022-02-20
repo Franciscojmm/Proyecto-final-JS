@@ -58,6 +58,7 @@ frmAltaPista.botonEnviar.addEventListener("click",altaPista,false);
 frmListados.botonEnviar.addEventListener("click",manejadorListado,false);
 document.getElementById("comboListados").addEventListener("change",mostrarFiltros,false);
 document.getElementById("cerrarSesion").addEventListener("click",cerrarSesion,false);
+frmLlamadaClases.botonFiltrado.addEventListener("click",filtrarBusquedaClases,false);
 
 
 //Creamos el objeto gestion y despues cargamos el documento XML
@@ -677,9 +678,9 @@ function procesoRespuestaGetClases(datos, textStatus, jqXHR){
     for(let c of datos){
         oTabla+="<tr><td>"+c.nombre+"</td><td>"+c.descripcion+"</td><td>"+c.capacidad+"</td><td>"+c.tipo_actividad+"</td><td>"+c.fecha_inicio+"</td><td>"+c.hora_inicio+"</td>";
         if(c.estaClase==true){
-            oTabla+="<td><button data-dni="+datosSesion.contraseña+" data-clase="+c.id+" value='cancelar'>Cancelar Clase</td></tr>";
+            oTabla+="<td><button style=background-color:#F67474; data-dni="+datosSesion.contraseña+" data-clase="+c.id+" value='cancelar'>Cancelar Clase</td></tr>";
         }else {
-            oTabla+="<td><button data-dni="+datosSesion.contraseña+" data-clase="+c.id+" value='apuntarse'>Apuntarse Clase</td></tr>";
+            oTabla+="<td><button style=background-color:#D1EA82; data-dni="+datosSesion.contraseña+" data-clase="+c.id+" value='apuntarse'>Apuntarse Clase</td></tr>";
         }    
     }
     document.querySelector("#clases").innerHTML=oTabla;
@@ -848,6 +849,7 @@ function ocultarTodosFormularios() {
     }
     document.getElementById("datosUsus").innerHTML="";
     document.getElementById("resuls").innerHTML="";
+    document.getElementById("clases").innerHTML="";
 }
 
 //Carga las clase desde el XML
@@ -959,83 +961,61 @@ function procesoRespuestaGetListaPistas(data)
 
 //listadoClase
 function listadoClase(){
-    let oTabla = document.createElement("table");
-    let oCapa = document.querySelector(".formularios");
-    let oTH = document.createElement("th");
-    let oClases = oGestion.clases;
+    frmLlamadaClases.reset();
 
-    oTabla.classList.add("table");
-  
+   $("#frmLlamadaClases").show();    
 
-    let cabecera = oTabla.createTHead();
+    if(sessionStorage.getItem("combos")==null) // Solo los carga si no estan cargados antes.
+    {
+   $.getJSON("cargarCombosFiltros.php", function(result){
 
+    sessionStorage.setItem("combos",JSON.stringify(result)); //Lo metemos en sesion para que cuando se cierre la pestaña se recargue.
 
-    let filaCabecera = cabecera.insertRow(-1);
-    let celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "ID";
+    for(let tipo of result.tipos)
+        document.getElementById("comboActividades").innerHTML+=tipo;
 
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Nombre";
+    for(let instructor of result.instructores)
+        document.getElementById("comboInstructores").innerHTML+=instructor;
 
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Descripcion";
+  });
 
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Fecha Inicio";
+}
+else{
+    document.getElementById("comboActividades").innerHTML='<option value="todas">Todas las Actividades</option>';
+    document.getElementById("comboInstructores").innerHTML='<option value="todos">Todos los Instructores</option>';
 
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Fecha Fin";
+    for(let tipo of JSON.parse(sessionStorage.getItem("combos")).tipos)
+        document.getElementById("comboActividades").innerHTML+=tipo;
 
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Capacidad";
+    for(let instructor of JSON.parse(sessionStorage.getItem("combos")).instructores)
+        document.getElementById("comboInstructores").innerHTML+=instructor;
+}
 
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Tipo actividad";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Nombre Instructor";
-
-    let cuerpo = oTabla.createTBody();
-
-    for(oCla of oClases){
-        let filaCuerpo = cuerpo.insertRow(-1);
-        let celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oCla.ID;
-
-        celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oCla.Nombre;
-
-        celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oCla.Descripcion;
-
-        celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oCla.Inicio.toLocaleDateString("es-ES")+" "+ oCla.Inicio.getUTCHours()+":"+oCla.Inicio.getMinutes()+"H";
-
-        celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oCla.Fin.toLocaleDateString("es-ES")+" "+ oCla.Fin.getUTCHours()+":"+oCla.Fin.getMinutes()+"H";
-
-        celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oCla.Capacidad;
-
-        celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oCla.Actividad;
-
-        let oInstructor = oGestion.buscarUsuario(oCla.Instructor);
-
-        celdaCuerpo = filaCuerpo.insertCell(-1);
-        celdaCuerpo.textContent = oInstructor.NombreAp;
-    }
-
-    oCapa.appendChild(oTabla);
     frmListados.reset();
 }
+//Filtrado de clases.
+function filtrarBusquedaClases(){
+    let diaIn = frmLlamadaClases.diaIn.value;
+    let diaFin = frmLlamadaClases.diaFin.value;
+    let instructorBus = frmLlamadaClases.comboInstructores.value;
+    let actividadBus = frmLlamadaClases.comboActividades.value;
+
+    if (diaIn == '' || diaFin == '')
+        alert("Debe rellenar las fechas de busqueda.");
+        else{
+            $.getJSON("busquedaClases.php",{usu : datosSesion.contraseña, diaIn : diaIn , diaFin: diaFin , instructor : instructorBus , acti : actividadBus},function(result){
+                oTabla = "<table class='table'><tr><th>Nombre</th><th>Descripcion</th><th>Capacidad</th><th>Actividad</th><th>Fecha</th><th>Hora</th><th>Opcion</th></tr>";
+               for(let clase of result)
+               oTabla += "<td>"+clase.nombre+"</td>";
+
+               oTabla+="</table>";
+
+               document.getElementById("resuls").innerHTML = oTabla;
+            });
+        }
+
+}
+
 //Listado de reserva entre dos fecha
 function listadoReserva(){
     let dtFechaInicio = document.querySelector("#fechaInicioListado").value;

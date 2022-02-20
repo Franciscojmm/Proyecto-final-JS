@@ -113,6 +113,29 @@
                     <input type="reset" name="botonCancelar" value="Cancelar" class="btn btn-secondary">
                 </form>
             </div>
+            <!-- Form para clases-->
+            <div class="divfrmLlamadaClases">
+                <form name="frmLlamadaClases" id="frmLlamadaClases">
+                    <legend><b>Sus clases : </b></legend>
+                    <hr>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text diaReserva" id="basic-addon1">Desde :</span>
+                        <input type="date" class="form-control diaReserva"  name="diaIn" aria-label="Día de la Reserva" aria-describedby="basic-addon1">
+
+                        <span class="input-group-text diaReserva" id="basic-addon1">Hasta :</span>
+                        <input type="date" class="form-control diaReserva"  name="diaFin" aria-label="Día de la Reserva" aria-describedby="basic-addon1">
+
+                        <select class="form-select " aria-label="Selecciona un Listado" id="comboInstructores">
+                            <option value="todos">Todos los instructores</option>
+                        </select>
+
+                            <select class="form-select " aria-label="Selecciona un Listado" id="comboActividades">
+                                <option value="todas">Todas las Actividades</option>
+                            </select>
+                            <input type="button" name="botonFiltrado" value="Filtrar" class="btn btn-primary">
+                    </div> 
+                </form>
+            </div>
             <!--Formulario Alta Clases-->
             <div class="divfrmAltaClases">
                 <form name="frmAltaClases" id="frmAltaClases">
