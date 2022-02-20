@@ -1,4 +1,4 @@
-
+document.querySelector("#clases").addEventListener("click",apuntarseClase);
 //Si no se ha realizado el login se manda a la página de login.
 if(localStorage.getItem("session") == null)
 {
@@ -50,6 +50,7 @@ document.getElementById('alquilarPista').addEventListener("click",mostrarPistas,
 document.getElementById('crearClase').addEventListener("click",mostrarFormulario,false);
 document.getElementById('apuntarClase').addEventListener("click",mostrarClases,false);
 document.getElementById('listados').addEventListener("click",mostrarFormulario,false);
+document.querySelector("#clases").addEventListener("click",apuntarseClase);
 //document.getElementById('comboUsuarios').addEventListener("change",mostrarDatosUsuario,false);
 //frmModificarUsuario.botonEnviar.addEventListener("click",modificarUsuario,false);
 frmAltaClases.botonEnviar.addEventListener("click",altaClase,false);
@@ -674,61 +675,31 @@ function mostrarClases(){
 }
 function procesoRespuestaGetClases(datos, textStatus, jqXHR){
     console.log(datos);
-    oTabla = "<table class='table'><tr><th>Nombre</th><th>Descripcion</th><th>Capacidad</th><th>Actividad</th><th>Fecha</th><th>Hora</th><th>Opcion</th><tr>";
+    oTabla = "<table class='table'><tr><th>Nombre</th><th>Descripcion</th><th>Capacidad</th><th>Actividad</th><th>Fecha</th><th>Hora</th><th>Plazas Libres</th><th>Opcion</th><tr>";
     for(let c of datos){
-        oTabla+="<tr><td>"+c.nombre+"</td><td>"+c.descripcion+"</td><td>"+c.capacidad+"</td><td>"+c.tipo_actividad+"</td><td>"+c.fecha_inicio+"</td><td>"+c.hora_inicio+"</td>";
-        if(c.estaClase==true){
-            oTabla+="<td><button style=background-color:#F67474; data-dni="+datosSesion.contraseña+" data-clase="+c.id+" value='cancelar'>Cancelar Clase</td></tr>";
-        }else {
-            oTabla+="<td><button style=background-color:#D1EA82; data-dni="+datosSesion.contraseña+" data-clase="+c.id+" value='apuntarse'>Apuntarse Clase</td></tr>";
+        if((parseInt(c.plazasLibres)>0 && c.estaClase==false) || c.estaClase==true){
+            oTabla+="<tr><td>"+c.nombre+"</td><td>"+c.descripcion+"</td><td>"+c.capacidad+"</td><td>"+c.tipo_actividad+"</td><td>"+c.fecha_inicio+"</td><td>"+c.hora_inicio+"</ td><td>"+c.plazasLibres+"</td>";
+            if(c.estaClase==true){
+                oTabla+="<td><button style=background-color:#F67474; data-dni="+datosSesion.contraseña+" data-clase="+c.id+" value='cancelar'>Cancelar Clase</td></tr>";
+            }else {
+                oTabla+="<td><button style=background-color:#D1EA82; data-dni="+datosSesion.contraseña+" data-clase="+c.id+" value='apuntarse'>Apuntarse Clase</td></tr>";
+            }
         }    
     }
     document.querySelector("#clases").innerHTML=oTabla;
 }
-/*function estaApuntadoClase(sDNI,IDClase){
-    $.get("getEstaApuntadoClase.php?dni="+sDNI+"&clase="+IDClase,procesoGetEstaApuntadoClase,'text');
-}
-function procesoGetEstaApuntadoClase(datos, textStatus, jqXHR){
-    console.log(datos);
-    if(datos==true){
-        oTabla+="<td><button data-dni="+datosSesion.contraseña+" data-clase="+localStorage.getItem('clase')+" value='cancelar'>Cancelar Clase</td></tr>";
-    }else {
-        oTabla+="<td><button data-dni="+datosSesion.contraseña+" data-clase="+localStorage.getItem('clase')+" value='apuntarse'>Apuntarse Clase</td></tr>";
-    }
 
-}*/
 //Apuntarse Clase
-function apuntarseClase() {
-    let sDNI = document.querySelector(".dniUsuarioApuntarseClase").value;
-    let indexCombo = document.querySelector("#comboClasesApuntarseClase").selectedIndex;
-    let iIDClase = document.querySelector("#comboClasesApuntarseClase")[indexCombo].value;
-    let bValido = true;
-    let sErrores="";
-
-   let  oExpReg = /^\d{8}[a-zA-Z]{1}$/; 
-    if(!validaFormularios(sDNI,oExpReg))
-    {
-        document.querySelector(".dniUsuarioApuntarseClase").focus();
-        bValido=false;
-        document.querySelector(".dniUsuarioApuntarseClase").classList.add("error");
-        sErrores += "El DNI no tiene el formato correcto\n";
+function apuntarseClase(oEvento) {
+    oE=oEvento || window.event;
+    if(oE.target.nodeName=="BUTTON"){
+        let oBtn = oE.target;
+        $.get("apuntarseClase.php?dni="+datosSesion.contraseña+"&clase="+oBtn.dataset.clase+"&opcion="+oBtn.value+"&capacidad="+oBtn.dataset.capacidad,procesoRespuestaApuntarseClase,'json');
     }
-    else
-    document.querySelector(".dniUsuarioApuntarseClase").classList.remove("error");
-
-
-    if(document.querySelector("#comboClasesApuntarseClase").selectedIndex == 0)
-    {
-        sErrores+= "Debe seleccionar una clase.";
-        bValido = false;
-    }
-
-    if(bValido)
-    {
-    alert(oGestion.apuntarseClase(sDNI,iIDClase));
-    }
-    else
-    alert(sErrores);
+}
+function procesoRespuestaApuntarseClase(datos, textStatus, jqXHR){
+    alert(datos.respuesta);
+    mostrarClases();
 }
 function cargarDatosUsuario(){
     $.get("cargaDatosUsus.php?id='"+datosSesion.contraseña+"'",procesoRespuestaCargaUsus,'XML');

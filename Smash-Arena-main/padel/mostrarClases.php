@@ -25,6 +25,10 @@
         }else {
             $datos[$contador]["estaClase"]=false;
         }
+        $sql2 = "select count(dni_usuario) as contador from clases_usuarios WHERE id_clase=$id";
+        $resultados3 = mysqli_query($conexion,$sql2) or die(mysqli_error($conexion));
+        $resultado2= mysqli_fetch_assoc($resultados3);
+        $datos[$contador]["plazasLibres"]=$fila["capacidad"]-$resultado2['contador'];
         $contador++;
     }
     mysqli_close($conexion);
