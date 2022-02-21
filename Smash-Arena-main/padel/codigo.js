@@ -62,17 +62,9 @@ document.getElementById("cerrarSesion").addEventListener("click",cerrarSesion,fa
 frmLlamadaClases.botonFiltrado.addEventListener("click",filtrarBusquedaClases,false);
 
 
-//Creamos el objeto gestion y despues cargamos el documento XML
-var oGestion = new Gestion();
-var oXML = loadXMLDoc("xmlSMASH-ARENA.xml");
+//variable global
 var oTabla="";
 
-
-//Llamada a todas las funciones principales
-cargarUsuarios();
-cargarPistas();
-cargarClases();
-cargarReservas();
                                         
 function recuperarUsuarios(){
 
@@ -588,7 +580,6 @@ function insertarClase(sNombreClase,sDescripcionClase,dtDiaInicio,horaInicio,iDu
     .then(function(response){
         response.text().then(function(text){
             alert(text);
-            cargarComboClases();
             frmAltaClases.reset();
             ocultarTodosFormularios();
         });
@@ -684,7 +675,7 @@ function procesoRespuestaGetClases(datos, textStatus, jqXHR){
         fecha.setMinutes(horas[1]);
         let fechas = c.fecha_inicio.split("-");
         console.log(fecha);
-        if(fecha>fechaHoy()){
+        if(fecha>fechaHoy() && c.dni_instructor != datosSesion.contraseña ){
         if((parseInt(c.plazasLibres)>0 && c.estaClase==false) || c.estaClase==true){
                 oTabla+="<tr><td>"+c.nombre+"</td><td>"+c.descripcion+"</td><td>"+c.capacidad+"</td><td>"+c.tipo_actividad+"</td><td>"+fechas[2]+"-"+fechas[1]+"-"+fechas[0]+"</td><td>"+horas[0]+":"+horas[1]+"</ td><td>"+c.plazasLibres+"</td>";
                 if(c.estaClase==true){
@@ -798,28 +789,7 @@ function cargarPistas(){
     }
 }
 
-//Cargar los usuarios desde el XML
-function cargarUsuarios() {
-    var oUsuarios = oXML.getElementsByTagName("usuario");
-    for(let oUsu of oUsuarios){
-        let sNombreUsuario = oUsu.getElementsByTagName("nombre")[0].textContent;
-        let sDNI = oUsu.getElementsByTagName("dni")[0].textContent;
-        let iEdad = oUsu.getElementsByTagName("edad")[0].textContent;
-        let bSexo = oUsu.getElementsByTagName("sexo")[0].textContent;
-        let bInstructor = oUsu.getElementsByTagName("instructor")[0].textContent;
-        if(bSexo=="Masculino"){
-            bSexo=true;
-        }else {
-            bSexo=false
-        }
-        if(bInstructor=="Si"){
-            bInstructor=true
-        }else {
-            bInstructor=false;
-        }
-        oGestion.altaUsuario(new Usuario(sNombreUsuario,sDNI,iEdad,bSexo,bInstructor)); 
-    }
-}
+
 
 //Oculta todos los formularios
 function ocultarTodosFormularios() {
@@ -830,39 +800,6 @@ function ocultarTodosFormularios() {
     document.getElementById("datosUsus").innerHTML="";
     document.getElementById("resuls").innerHTML="";
     document.getElementById("clases").innerHTML="";
-}
-
-//Carga las clase desde el XML
-function cargarClases(){
-    var oClases = oXML.getElementsByTagName("clase");
-    for(oCla of oClases){
-        let iIDClase = oCla.getElementsByTagName("iIdClase")[0].textContent;
-        let sNombre = oCla.getElementsByTagName("sNombre")[0].textContent;
-        let sDescripcion = oCla.getElementsByTagName("sDescripcion")[0].textContent;
-        let dtInicio = new Date(oCla.getElementsByTagName("dtInicio")[0].textContent);
-        let dtFin = new Date(oCla.getElementsByTagName("dtFin")[0].textContent);
-        let iCapacidad = parseInt(oCla.getElementsByTagName("iCapacidad")[0].textContent);
-        let sTipoActividad = oCla.getElementsByTagName("sTipoActividad")[0].textContent;
-        let siIdInstructor = oCla.getElementsByTagName("siIdInstructor")[0].textContent;
-
-        oGestion.altaClase(new Clase(iIDClase,sNombre,sDescripcion,dtInicio,dtFin,iCapacidad,sTipoActividad,siIdInstructor));
-    }
-}
-
-//Cargar reservas desde el XML
-function cargarReservas(){
-    let oReservas = oXML.querySelectorAll("reserva");
-    for(oRes of oReservas){
-        let sNombreReserva = oRes.querySelector("nombre").textContent;
-        let sDescripcion = oRes.querySelector("descripcion").textContent;
-        let dtFechaReserva = new Date(oRes.querySelector("fechaReserva").textContent);
-        let dtFechaFin = new Date(oRes.querySelector("fechaFin").textContent);
-        let iIDPista = oRes.querySelector("idPista").textContent;
-        let sDNIReserva = oRes.querySelector("usuarioReserva").textContent;
-
-        oGestion.altaReserva(new Reserva(sNombreReserva, sDescripcion, dtFechaReserva, dtFechaFin, iIDPista, sDNIReserva));
-
-    }
 }
 
 //Manejador de Listados

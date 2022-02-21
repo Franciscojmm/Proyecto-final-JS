@@ -13,7 +13,11 @@
     if(isset($_GET['dni']))
     {
         extract($_GET);
-       $where="WHERE dni = '".$dni."'";
+        if($dni!=""){
+            $where="WHERE dni = '".$dni."'";
+        } else {
+            $where="";
+        }
     }
     //Consulta a clases_usuarios.
     $sql = "SELECT * FROM usuarios ".$where." order by admin DESC, instructor DESC ";
