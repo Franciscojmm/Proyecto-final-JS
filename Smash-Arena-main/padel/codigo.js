@@ -675,17 +675,25 @@ function mostrarClases(){
     $.get("../php/mostrarClases.php?dni="+datosSesion.contraseña,procesoRespuestaGetClases,'json');
 }
 function procesoRespuestaGetClases(datos, textStatus, jqXHR){
-    console.log(datos);
     oTabla = "<table class='table'><tr><th>Nombre</th><th>Descripcion</th><th>Capacidad</th><th>Actividad</th><th>Fecha</th><th>Hora</th><th>Plazas Libres</th><th>Opcion</th><tr>";
     for(let c of datos){
+        let fecha = new Date(c.fecha_inicio);
+        let horas = c.hora_inicio.split(":");
+        horas.pop();
+        fecha.setHours(horas[0]);
+        fecha.setMinutes(horas[1]);
+        let fechas = c.fecha_inicio.split("-");
+        console.log(fecha);
+        if(fecha>fechaHoy()){
         if((parseInt(c.plazasLibres)>0 && c.estaClase==false) || c.estaClase==true){
-            oTabla+="<tr><td>"+c.nombre+"</td><td>"+c.descripcion+"</td><td>"+c.capacidad+"</td><td>"+c.tipo_actividad+"</td><td>"+c.fecha_inicio+"</td><td>"+c.hora_inicio+"</ td><td>"+c.plazasLibres+"</td>";
-            if(c.estaClase==true){
-                oTabla+="<td><button style=background-color:#F67474; data-dni="+datosSesion.contraseña+" data-clase="+c.id+" value='cancelar'>Cancelar Clase</td></tr>";
-            }else {
-                oTabla+="<td><button style=background-color:#D1EA82; data-dni="+datosSesion.contraseña+" data-clase="+c.id+" value='apuntarse'>Apuntarse Clase</td></tr>";
+                oTabla+="<tr><td>"+c.nombre+"</td><td>"+c.descripcion+"</td><td>"+c.capacidad+"</td><td>"+c.tipo_actividad+"</td><td>"+fechas[2]+"-"+fechas[1]+"-"+fechas[0]+"</td><td>"+horas[0]+":"+horas[1]+"</ td><td>"+c.plazasLibres+"</td>";
+                if(c.estaClase==true){
+                    oTabla+="<td><button style=background-color:#F67474; data-dni="+datosSesion.contraseña+" data-clase="+c.id+" value='cancelar'>Cancelar Clase</td></tr>";
+                }else {
+                    oTabla+="<td><button style=background-color:#D1EA82; data-dni="+datosSesion.contraseña+" data-clase="+c.id+" value='apuntarse'>Apuntarse Clase</td></tr>";
+                }
             }
-        }    
+        }   
     }
     document.querySelector("#clases").innerHTML=oTabla;
 }
