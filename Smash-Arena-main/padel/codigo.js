@@ -80,7 +80,7 @@ function recuperarUsuarios(){
     let oAJAX = instanciarXHR();
 
     // 2. Construir URL y cadena de parametros
-    var sURL = "recuperarUsuarios.php";
+    var sURL = "../php/recuperarUsuarios.php";
     var sParametros = "";
 
     // 3. Definir manejador de eventos 
@@ -131,7 +131,7 @@ function mostrarDatosUsuario(){
      sParametros += sDNI;
 
      //Configurar la llamada --> Asincrono por defecto
-     oAjax.open("GET", encodeURI("getUsuario.php?" + sParametros));
+     oAjax.open("GET", encodeURI("../php/getUsuario.php?" + sParametros));
 
      //Asociar manejador de evento de la respuesta
      oAjax.addEventListener("readystatechange", procesoRespuestaGetDNI, false);
@@ -231,7 +231,7 @@ function updateUsuario(sDNI,sNombreUsuario,iEdad,bSexo,bInstructor){
     // 1. Instanciar objeto AJAX
     let oAJAX = instanciarXHR();
     // 2. Construir URL y cadena de parametros
-    var sURL = "updateUsuario.php";
+    var sURL = "../php/updateUsuario.php";
     var sParametros = "datos=";
     sParametros+=JSON.stringify({dni:sDNI,
                   nombre:sNombreUsuario,
@@ -259,7 +259,7 @@ function procesoRespuestaUpdateUsuario(){
 }
 function mostrarPistas(){
     ocultarTodosFormularios();
-    $.get("mostrarPistas.php",procesoRespuestaGetPistas,'json');
+    $.get("../php/mostrarPistas.php",procesoRespuestaGetPistas,'json');
 }
 function procesoRespuestaGetPistas(datos, textStatus, jqXHR) {
     let oCapa=document.querySelector(".formularios");
@@ -281,6 +281,7 @@ function procesoRespuestaGetPistas(datos, textStatus, jqXHR) {
     document.querySelector("#pistas").addEventListener("click",mostrarAltaPista);
     console.log(datos);
 }
+/* Mostrar un alert y borrar los datos del formulario.*/
 function mostrarAltaPista(oEvento){
     oE = oEvento || window.event;
     console.log(oE.target);
@@ -427,7 +428,7 @@ function insertarReserva(nomReserva,descripcionReserva,fechaInicio,horaInicio,ho
     console.log(horaInicio);
     console.log(horaFin);
     $.ajax({
-        url:"./insertarReserva.php",
+        url:"../php/insertarReserva.php",
         method: "POST",
         data: { nombre: nomReserva,
                 descripcion: descripcionReserva,
@@ -578,7 +579,7 @@ function insertarClase(sNombreClase,sDescripcionClase,dtDiaInicio,horaInicio,iDu
                         capacidad: iCapacidad,
                         tipo:sTipoClase,
                         instructor:idInstructor};
-    fetch("insertarClase.php",{ method: 'POST', 
+    fetch("../php/insertarClase.php",{ method: 'POST', 
                                 body: JSON.stringify(sParametros), 
                                 headers:{
                                   'Content-Type': 'application/json'
@@ -649,7 +650,7 @@ function insertarPista(sNombrePista,iIDPista,sDescripcion){
     var sParametros = { nombre:sNombrePista,
                         numero:iIDPista,
                         descripcion:sDescripcion};
-    fetch("insertarPista.php",{ method: 'POST', 
+    fetch("../php/insertarPista.php",{ method: 'POST', 
                                 body: JSON.stringify(sParametros), 
                                 headers:{
                                   'Content-Type': 'application/json'
@@ -671,7 +672,7 @@ function mostrarClases(){
     if(document.querySelector("#pistas")!=null)
     document.querySelector("#pistas").innerHTML="";
     ocultarTodosFormularios();
-    $.get("mostrarClases.php?dni="+datosSesion.contraseña,procesoRespuestaGetClases,'json');
+    $.get("../php/mostrarClases.php?dni="+datosSesion.contraseña,procesoRespuestaGetClases,'json');
 }
 function procesoRespuestaGetClases(datos, textStatus, jqXHR){
     console.log(datos);
@@ -694,7 +695,7 @@ function apuntarseClase(oEvento) {
     oE=oEvento || window.event;
     if(oE.target.nodeName=="BUTTON"){
         let oBtn = oE.target;
-        $.get("apuntarseClase.php?dni="+datosSesion.contraseña+"&clase="+oBtn.dataset.clase+"&opcion="+oBtn.value+"&capacidad="+oBtn.dataset.capacidad,procesoRespuestaApuntarseClase,'json');
+        $.get("../php/apuntarseClase.php?dni="+datosSesion.contraseña+"&clase="+oBtn.dataset.clase+"&opcion="+oBtn.value+"&capacidad="+oBtn.dataset.capacidad,procesoRespuestaApuntarseClase,'json');
     }
 }
 function procesoRespuestaApuntarseClase(datos, textStatus, jqXHR){
@@ -702,7 +703,7 @@ function procesoRespuestaApuntarseClase(datos, textStatus, jqXHR){
     mostrarClases();
 }
 function cargarDatosUsuario(){
-    $.get("cargaDatosUsus.php?id='"+datosSesion.contraseña+"'",procesoRespuestaCargaUsus,'XML');
+    $.get("../php/cargaDatosUsus.php?id='"+datosSesion.contraseña+"'",procesoRespuestaCargaUsus,'XML');
 }
 function procesoRespuestaCargaUsus(datos, textStatus, jqXHR) {
     console.log(datos);
@@ -890,7 +891,7 @@ function manejadorListado(){
 //Listado de usuarios
 function listadoUsuarios(){
 
-    $.get("listadoUsus.php",procesoRespuestaGetUsus,'json');
+    $.get("../php/listadoUsus.php",procesoRespuestaGetUsus,'json');
     frmListados.reset();
 }
 
@@ -916,7 +917,7 @@ function procesoRespuestaGetUsus(data)
 
 //listadoPistas
 function listadoPistas(){
-    $.get("listadoPistas.php",procesoRespuestaGetListaPistas,'json');
+    $.get("../php/listadoPistas.php",procesoRespuestaGetListaPistas,'json');
     frmListados.reset();
 }
 function procesoRespuestaGetListaPistas(data)
@@ -938,7 +939,7 @@ function listadoClase(){
 
     if(sessionStorage.getItem("combos")==null) // Solo los carga si no estan cargados antes.
     {
-   $.getJSON("cargarCombosFiltros.php", function(result){
+   $.getJSON("../php/cargarCombosFiltros.php", function(result){
 
     sessionStorage.setItem("combos",JSON.stringify(result)); //Lo metemos en sesion para que cuando se cierre la pestaña se recargue.
 
@@ -974,7 +975,7 @@ function filtrarBusquedaClases(){
     if (diaIn == '' || diaFin == '')
         alert("Debe rellenar las fechas de busqueda.");
         else{
-            $.getJSON("busquedaClases.php",{usu : datosSesion.contraseña, diaIn : diaIn , diaFin: diaFin , instructor : instructorBus , acti : actividadBus},function(result){
+            $.getJSON("../php/busquedaClases.php",{usu : datosSesion.contraseña, diaIn : diaIn , diaFin: diaFin , instructor : instructorBus , acti : actividadBus},function(result){
                 console.log(result);
                 oTabla = "<table class='table table-striped table-dark table-bordered'><tr class='table-info'><th>Nombre</th><th>Descripcion</th><th>Capacidad</th><th>Instructor</th><th>Actividad</th><th>Fecha</th><th>Hora</th></tr>";
                for(let clase of result)
@@ -1091,7 +1092,7 @@ function listadoReserva(){
 //listado de un usuario buscado por un DNI 
 function listadoBuscarUsuario(){
     let sDNI  = document.querySelector("#iDNIBuscar").value;
-    $.get("listadoUsus.php?dni="+sDNI,procesoRespuestaGetUsus,'json');
+    $.get("../php/listadoUsus.php?dni="+sDNI,procesoRespuestaGetUsus,'json');
     mostrarFiltros();
 }
 

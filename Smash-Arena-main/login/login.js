@@ -71,7 +71,7 @@ function registroUsu(){
             oAjax.send();*/
             
             if(bValido)
-            $.post("../compruebaUsuario.php",   // URL
+            $.post("../php/compruebaUsuario.php",   // URL
                 sParametros,               // Parámetros (ninguno en este caso)
                 procesoRespuestaInsercion,  // Callback
                 "text");            // Tipo de respuesta del servidor
@@ -87,7 +87,7 @@ function comprobarUsuario(nombreUsu,contra) {
             var sParametros = "usuario=";
             sParametros += JSON.stringify({nombre : nombreUsu , contrasena : contra , funcion : funcionLLamada});
             //Configurar la llamada --> Asincrono por defecto
-            oAjax.open("GET", encodeURI("../compruebaUsuario.php?" + sParametros));
+            oAjax.open("GET", encodeURI("../php/compruebaUsuario.php?" + sParametros));
             //Asociar manejador de evento de la respuesta
             oAjax.addEventListener("readystatechange", procesoRespuestaConsulta, false);
             //Hacer la llamada
