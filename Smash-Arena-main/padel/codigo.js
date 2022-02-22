@@ -706,7 +706,6 @@ function construirDatosUsu(oXML){
 
        let capaDatos = document.querySelector(".dat-clases");
         oClases = oXML.getElementsByTagName("clase");
-        //capaDatos.innerHTML="<h4>Sus Clases :</h4><br>"
         for(let oCLase of oClases){
 
             let oTabla = document.createElement("table");
@@ -727,7 +726,7 @@ function construirDatosUsu(oXML){
             llenaTablas(oTBody,oCLase,"capacidad", "Capacidad :");
             llenaTablas(oTBody,oCLase,"tipoActividad", "Actividad :");
             llenaTablas(oTBody,oCLase,"instructor", "Instructor :");
-            llenaTablas(oTBody,oCLase,"fechaIn", "Fechan Inicio :");
+            llenaTablas(oTBody,oCLase,"fechaIn", "Fecha Inicio :");
             llenaTablas(oTBody,oCLase,"horaIn", "Hora Inicio :");
 
             capaDatos.appendChild(oTabla);
@@ -768,7 +767,16 @@ function llenaTablas(cuerpo , objeto , dato , mensaje){
         let oCelda = oFila.insertCell(-1);
         oCelda.innerHTML = "<b>"+mensaje+"</b>";
         oCelda = oFila.insertCell(-1);
-        oCelda.textContent=objeto.getElementsByTagName(dato)[0].textContent;
+        if(dato == "horaIn" || dato == "horaFin"){
+            let array = objeto.getElementsByTagName(dato)[0].textContent.split(":");
+            oCelda.textContent=array[0]+":"+array[1];
+            console.log(array);
+        }else if(dato == "fechaIn" || dato == "diaReserva") {
+            let array = objeto.getElementsByTagName(dato)[0].textContent.split("-");
+            oCelda.textContent=array[2]+"/"+array[1]+"/"+array[0];
+        }else {
+            oCelda.textContent=objeto.getElementsByTagName(dato)[0].textContent;
+        }
 }
 
 //Cargar pistas desde XML
@@ -924,11 +932,11 @@ function filtrarBusquedaClases(){
 
                 fecha=new Date(clase.fecha_inicio)  
 
-               if(fecha >= fechaHoy())
-               primeraInser += "<tr><td>"+clase.nombre+"</td> <td>"+clase.descripcion+"</td> <td>"+clase.capacidad+"</td>  <td>"+clase.instructor+"</td>  <td>"+clase.tipo_actividad+"</td> <td>"+clase.fecha_inicio+"</td>  <td>"+clase.hora_inicio+"</td></tr>";
-               else 
-               segundaInser += "<tr><td>"+clase.nombre+"</td> <td>"+clase.descripcion+"</td> <td>"+clase.capacidad+"</td>  <td>"+clase.instructor+"</td>  <td>"+clase.tipo_actividad+"</td> <td>"+clase.fecha_inicio+"</td>  <td>"+clase.hora_inicio+"</td></tr>";
-
+               if(fecha >= fechaHoy()){
+               primeraInser += "<tr><td>"+clase.nombre+"</td> <td>"+clase.descripcion+"</td> <td>"+clase.capacidad+"</td>  <td>"+clase.instructor+"</td>  <td>"+clase.tipo_actividad+"</td> <td>"+devolverFecha(clase.fecha_inicio)+"</td>  <td>"+devolverHora(clase.hora_inicio)+"</td></tr>";
+               }else{ 
+               segundaInser += "<tr><td>"+clase.nombre+"</td> <td>"+clase.descripcion+"</td> <td>"+clase.capacidad+"</td>  <td>"+clase.instructor+"</td>  <td>"+clase.tipo_actividad+"</td> <td>"+devolverFecha(clase.fecha_inicio)+"</td>  <td>"+devolverHora(clase.hora_inicio)+"</td></tr>";
+               }
                }
                oTabla += "<tr class='table-warning'><td colspan='7'><b>Pendientes</b></td></tr>";
                oTabla += primeraInser;
@@ -977,9 +985,9 @@ function filtrarBusquedasPistas(){
 
                 fecha=new Date(pista.dia_reserva);  
                if(fecha >= fechaHoy())
-               primeraInser += "<tr><td>"+pista.nombre_pista+"</td> <td>"+pista.nombre+"</td> <td>"+pista.dia_reserva+"</td>  <td>"+pista.hora_inicio+"</td>  <td>"+pista.hora_fin+"</td> <td>"+pista.descripcion+"</td>  </tr>";
+               primeraInser += "<tr><td>"+pista.nombre_pista+"</td> <td>"+pista.nombre+"</td> <td>"+devolverFecha(pista.dia_reserva)+"</td>  <td>"+devolverHora(pista.hora_inicio)+"</td>  <td>"+devolverHora(pista.hora_fin)+"</td> <td>"+pista.descripcion+"</td>  </tr>";
                else 
-               segundaInser += "<tr><td>"+pista.nombre_pista+"</td> <td>"+pista.nombre+"</td> <td>"+pista.dia_reserva+"</td>  <td>"+pista.hora_inicio+"</td>  <td>"+pista.hora_fin+"</td> <td>"+pista.descripcion+"</td>  </tr>";
+               segundaInser += "<tr><td>"+pista.nombre_pista+"</td> <td>"+pista.nombre+"</td> <td>"+devolverFecha(pista.dia_reserva)+"</td>  <td>"+devolverHora(pista.hora_inicio)+"</td>  <td>"+devolverHora(pista.hora_fin)+"</td> <td>"+pista.descripcion+"</td>  </tr>";
 
                }
                oTabla += "<tr class='table-warning'><td colspan='6'><b>Pendientes</b></td></tr>";
@@ -1086,7 +1094,14 @@ function cerrarSesion(){
     localStorage.removeItem("session");
     window.location="../login/login.html";
 }
-
+function devolverHora(hora){
+    let arrayHora = hora.split(":");
+    return arrayHora[0]+":"+arrayHora[1];
+}
+function devolverFecha(fecha){
+    let arrayFecha = fecha.split("-");
+    return arrayFecha[2]+"-"+arrayFecha[1]+"-"+arrayFecha[0];
+}
 function instanciarXHR() {
     var xhttp = null;
 

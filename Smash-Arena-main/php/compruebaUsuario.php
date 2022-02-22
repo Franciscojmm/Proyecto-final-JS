@@ -44,9 +44,6 @@ function insertarUsu($conexion,$oUsu){
     else 
         $sexo='F';
 
-    if($oUsu->instruct)
-        $ins="S";
-    else
         $ins="N";    
 
     $sql = "INSERT INTO usuarios values('".$oUsu->contrasena."','".$oUsu->nombre."','".$oUsu->edad."','".$sexo."', 0 ,'".$ins."')";

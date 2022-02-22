@@ -17,7 +17,11 @@ if(localStorage.getItem('session')!=null)
     frmLogin.usuario.value = sesionDes.nombre;
     frmLogin.contraseña.value = sesionDes.contraseña;
 }
-
+function cerrarRegistro(){
+    document.getElementById("frmAltaUsuario").style.display = "none";
+    frmAltaUsuario.reset();
+    document.getElementById("frmLogin").style.display="block";
+}
 function iniciasesion(){
     //Comprobación que el usuario está registrado en la base de datos.
     let nombreUsu = frmLogin.usuario.value;
@@ -30,6 +34,7 @@ function irAlRegistro()
 {
     document.getElementById("frmLogin").style.display="none";
     document.getElementById("frmAltaUsuario").style.display="block";
+    document.getElementById("btnCancelarAltaUsuario").addEventListener("click",cerrarRegistro);
 }
 function registroUsu(){
     //var oAjax = instanciarXHR();
@@ -59,13 +64,8 @@ function registroUsu(){
             }else {
                 bSexo=false;
             }
-            if(document.getElementsByName('checkInstructor')[0].checked){
-                bInstructor=true;
-            }else {
-                bInstructor=false;
-            }
             
-            sParametros += JSON.stringify({nombre : sNombreUsuario , contrasena : sDNI , edad : iEdad , sexo : bSexo , instruct : bInstructor , funcion : "insertar" });
+            sParametros += JSON.stringify({nombre : sNombreUsuario , contrasena : sDNI , edad : iEdad , sexo : bSexo , funcion : "insertar" });
             /*oAjax.open("GET", encodeURI("../compruebaUsuario.php?" + sParametros)); //Cambiar a POST los insert son con POST.
             oAjax.addEventListener("readystatechange", procesoRespuestaInsercion, false);
             oAjax.send();*/
