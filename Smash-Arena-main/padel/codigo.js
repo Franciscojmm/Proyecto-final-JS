@@ -312,13 +312,7 @@ function mostrarFormulario(oE){
        // $("#"+idForm).parent().show("normal");
        $("#"+idForm).show("normal");
     }
-}
-//borrarTabla
-function borrarTabla() {
-    let oTabla = document.querySelector(".table");
-    if(oTabla != null){
-        oTabla.remove();
-    }
+    mostrarFiltros();
 }
 //Reservar Pista
 function hacerReserva()
@@ -1004,7 +998,7 @@ function filtrarBusquedasPistas(){
 function listadoBuscarUsuario(){
     let sDNI  = document.querySelector("#iDNIBuscar").value;
     $.get("../php/listadoUsus.php?dni="+sDNI,procesoRespuestaGetUsus,'json');
-    mostrarFiltros();
+    frmListados.reset();
 }
 
 //mostrarFiltros
@@ -1029,24 +1023,6 @@ function mostrarFiltros(){
         case "reservas":
             oInputDNI.remove();
             oSpanDNI.remove();
-            oInput1.setAttribute("type","date");
-            oInput1.setAttribute("id","fechaInicioListado");
-            oInput1.classList.add("form-control");
-            frmListados.insertBefore(oInput1,frmListados.botonEnviar);
-            oSpan1.setAttribute("id","lblFechaInicio");
-            oSpan1.textContent = "Fecha Inicio";
-            oSpan1.classList.add("input-group-text");
-            frmListados.insertBefore(oSpan1,oInput1);
-
-            oInput2.setAttribute("type","date");
-            oInput2.setAttribute("id","fechaFinListado");
-            oInput2.classList.add("form-control");
-            oInput2.classList.add("mb-4");
-            frmListados.insertBefore(oInput2,frmListados.botonEnviar);
-            oSpan2.setAttribute("id","lblFinInicio");
-            oSpan2.textContent = "Fecha Fin";
-            oSpan2.classList.add("input-group-text");
-            frmListados.insertBefore(oSpan2,oInput2);
             break;
         case "buscarUsuarioPorDNI":
             oInput1.remove();
