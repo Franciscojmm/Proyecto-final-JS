@@ -60,7 +60,7 @@ frmListados.botonEnviar.addEventListener("click",manejadorListado,false);
 document.getElementById("comboListados").addEventListener("change",mostrarFiltros,false);
 document.getElementById("cerrarSesion").addEventListener("click",cerrarSesion,false);
 frmLlamadaClases.botonFiltrado.addEventListener("click",filtrarBusquedaClases,false);
-
+frmLlamadaReservas.botonFiltrado.addEventListener("click",filtrarBusquedasPistas,false);
 
 //variable global
 var oTabla="";
@@ -922,10 +922,24 @@ function filtrarBusquedaClases(){
         else{
             $.getJSON("../php/busquedaClases.php",{usu : datosSesion.contraseña, diaIn : diaIn , diaFin: diaFin , instructor : instructorBus , acti : actividadBus},function(result){
                 console.log(result);
-                oTabla = "<table class='table table-striped table-dark table-bordered'><tr class='table-info'><th>Nombre</th><th>Descripcion</th><th>Capacidad</th><th>Instructor</th><th>Actividad</th><th>Fecha</th><th>Hora</th></tr>";
-               for(let clase of result)
-               oTabla += "<tr><td>"+clase.nombre+"</td> <td>"+clase.descripcion+"</td> <td>"+clase.capacidad+"</td>  <td>"+clase.instructor+"</td>  <td>"+clase.tipo_actividad+"</td> <td>"+clase.fecha_inicio+"</td>  <td>"+clase.hora_inicio+"</td></tr>";
+                let primeraInser="";
+                let segundaInser="";
+                oTabla = "<table style='text-align : center' class='table table-striped table-dark table-bordered'><tr class='table-info'><th>Nombre</th><th>Descripcion</th><th>Capacidad</th><th>Instructor</th><th>Actividad</th><th>Fecha</th><th>Hora</th></tr>";
+                let fecha = new Date();  
+               for(let clase of result){
 
+                fecha=new Date(clase.fecha_inicio)  
+
+               if(fecha >= fechaHoy())
+               primeraInser += "<tr><td>"+clase.nombre+"</td> <td>"+clase.descripcion+"</td> <td>"+clase.capacidad+"</td>  <td>"+clase.instructor+"</td>  <td>"+clase.tipo_actividad+"</td> <td>"+clase.fecha_inicio+"</td>  <td>"+clase.hora_inicio+"</td></tr>";
+               else 
+               segundaInser += "<tr><td>"+clase.nombre+"</td> <td>"+clase.descripcion+"</td> <td>"+clase.capacidad+"</td>  <td>"+clase.instructor+"</td>  <td>"+clase.tipo_actividad+"</td> <td>"+clase.fecha_inicio+"</td>  <td>"+clase.hora_inicio+"</td></tr>";
+
+               }
+               oTabla += "<tr class='table-warning'><td colspan='7'><b>Pendientes</b></td></tr>";
+               oTabla += primeraInser;
+               oTabla += "<tr class='table-warning'><td colspan='7'><b>Pasadas</b></td></tr>";
+               oTabla += segundaInser;
                oTabla+="</table>";
 
                document.getElementById("resuls").innerHTML = oTabla;
@@ -936,102 +950,54 @@ function filtrarBusquedaClases(){
 
 //Listado de reserva entre dos fecha
 function listadoReserva(){
-    let dtFechaInicio = document.querySelector("#fechaInicioListado").value;
-    let dtFechaFin = document.querySelector("#fechaFinListado").value
-    let oTabla = document.createElement("table");
-    let oCapa = document.querySelector(".formularios");
-    let oTH = document.createElement("th");
-    let oReservas = [];
-    for(oPis of oGestion.pistas){
-        for(oRes of oPis.reservas){
-            oReservas.push(oRes);
+    ocultarTodosFormularios();
+   cargarFiltrosReservas();
+   document.getElementById("frmLlamadaReservas").style.display="block";
+
+}
+function cargarFiltrosReservas(){
+    
+    $.getJSON("../php/cargarComboReserva.php", function(result){
+        document.getElementById("comboPis").innerHTML='<option value="todasPis">Todas las pistas</option>';
+        for(let pista of result)
+        document.getElementById("comboPis").innerHTML+=pista;
+    });
+
+}
+
+function filtrarBusquedasPistas(){
+    let diaIn = frmLlamadaReservas.diaIn.value;
+    let diaFin = frmLlamadaReservas.diaFin.value;
+    let pista = frmLlamadaReservas.comboPis.value;
+    
+    if (diaIn == '' || diaFin == '')
+        alert("Debe rellenar las fechas de busqueda.");
+        else{
+            $.getJSON("../php/busquedaReserva.php",{usu : datosSesion.contraseña, diaIn : diaIn , diaFin: diaFin , pista: pista},function(result){
+                console.log(result);
+                let primeraInser="";
+                let segundaInser="";
+                oTabla = "<table style='text-align : center' class='table table-striped table-dark table-bordered'><tr class='table-info'><th>Pista</th><th>Nombre Reserva</th><th>Dia</th><th>Hora inicio</th><th>Hora Fin</th><th>Descripcion</th></tr>";
+                let fecha = new Date();  
+               for(let pista of result){
+
+                fecha=new Date(pista.dia_reserva);  
+               if(fecha >= fechaHoy())
+               primeraInser += "<tr><td>"+pista.nombre_pista+"</td> <td>"+pista.nombre+"</td> <td>"+pista.dia_reserva+"</td>  <td>"+pista.hora_inicio+"</td>  <td>"+pista.hora_fin+"</td> <td>"+pista.descripcion+"</td>  </tr>";
+               else 
+               segundaInser += "<tr><td>"+pista.nombre_pista+"</td> <td>"+pista.nombre+"</td> <td>"+pista.dia_reserva+"</td>  <td>"+pista.hora_inicio+"</td>  <td>"+pista.hora_fin+"</td> <td>"+pista.descripcion+"</td>  </tr>";
+
+               }
+               oTabla += "<tr class='table-warning'><td colspan='6'><b>Pendientes</b></td></tr>";
+               oTabla += primeraInser;
+               oTabla += "<tr class='table-warning'><td colspan='6'><b>Pasadas</b></td></tr>";
+               oTabla += segundaInser;
+               oTabla+="</table>";
+
+               document.getElementById("resuls").innerHTML = oTabla;
+            });
         }
-    }
 
-    oTabla.classList.add("table");
-  
-
-    let cabecera = oTabla.createTHead();
-
-
-    let filaCabecera = cabecera.insertRow(-1);
-    let celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Nombre";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Descripcion";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Fecha Inicio";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "Fecha Fin";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "ID Pista";
-
-    oTH = document.createElement("th");
-    celdaCabecera = filaCabecera.appendChild(oTH);
-    celdaCabecera.textContent = "DNI Usuario";
-
-    let cuerpo = oTabla.createTBody();
-    if(dtFechaInicio=="" || dtFechaFin == ""){
-        for(oRes of oReservas){
-            let filaCuerpo = cuerpo.insertRow(-1);
-            let celdaCuerpo = filaCuerpo.insertCell(-1);
-            celdaCuerpo.textContent = oRes.Nombre;
-    
-            celdaCuerpo = filaCuerpo.insertCell(-1);
-            celdaCuerpo.textContent = oRes.Descripcion;
-    
-            celdaCuerpo = filaCuerpo.insertCell(-1);
-            celdaCuerpo.textContent = oRes.fechaIni.toLocaleDateString("es-ES")+" "+ oRes.fechaIni.getUTCHours()+":"+oRes.fechaIni.getMinutes()+"H";
-    
-            celdaCuerpo = filaCuerpo.insertCell(-1);
-            celdaCuerpo.textContent = oRes.fechaFin.toLocaleDateString("es-ES")+" "+ oRes.fechaFin.getUTCHours()+":"+oRes.fechaFin.getMinutes()+"H";
-    
-            celdaCuerpo = filaCuerpo.insertCell(-1);
-            celdaCuerpo.textContent = oRes.pista;
-
-            celdaCuerpo = filaCuerpo.insertCell(-1);
-            celdaCuerpo.textContent = oRes.dniReserva;
-        }
-    }else {
-        dtFechaInicio = new Date(dtFechaInicio);
-        dtFechaFin = new Date(dtFechaFin);
-
-        for(oRes of oReservas){
-            if(oRes.fechaIni>=dtFechaInicio && oRes.fechaFin <= dtFechaFin){
-                let filaCuerpo = cuerpo.insertRow(-1);
-                let celdaCuerpo = filaCuerpo.insertCell(-1);
-                celdaCuerpo.textContent = oRes.Nombre;
-        
-                celdaCuerpo = filaCuerpo.insertCell(-1);
-                celdaCuerpo.textContent = oRes.Descripcion;
-        
-                celdaCuerpo = filaCuerpo.insertCell(-1);
-                celdaCuerpo.textContent = oRes.fechaIni.toLocaleDateString("es-ES")+" "+ oRes.fechaIni.getUTCHours()+":"+oRes.fechaIni.getMinutes()+"H";
-        
-                celdaCuerpo = filaCuerpo.insertCell(-1);
-                celdaCuerpo.textContent = oRes.fechaFin.toLocaleDateString("es-ES")+" "+ oRes.fechaFin.getUTCHours()+":"+oRes.fechaFin.getMinutes()+"H";
-        
-                celdaCuerpo = filaCuerpo.insertCell(-1);
-                celdaCuerpo.textContent = oRes.pista;
-    
-                celdaCuerpo = filaCuerpo.insertCell(-1);
-                celdaCuerpo.textContent = oRes.dniReserva;
-            }   
-        }
-    }
-
-
-    oCapa.appendChild(oTabla);
-    frmListados.reset();
-    mostrarFiltros()
 
 }
 //listado de un usuario buscado por un DNI 

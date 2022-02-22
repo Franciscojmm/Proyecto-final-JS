@@ -129,6 +129,11 @@ legend {
     display: none;
 }
 
+#frmLlamadaReservas{
+    display: none;
+}
+
+
 .error{
     background-color: yellow;
 }
