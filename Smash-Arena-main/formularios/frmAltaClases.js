@@ -142,9 +142,11 @@ function insertarClase(sNombreClase,sDescripcionClase,dtDiaInicio,horaInicio,iDu
                             })
     .then(function(response){
         response.text().then(function(text){
+            if(text=="Alta Clase Ok"){
+                frmAltaClases.reset();
+                ocultarTodosFormularios();
+            }
             alert(text);
-            frmAltaClases.reset();
-            ocultarTodosFormularios();
         });
     });
 }
