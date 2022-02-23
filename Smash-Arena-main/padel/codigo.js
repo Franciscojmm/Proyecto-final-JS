@@ -845,8 +845,8 @@ function listadoUsuarios(){
 function procesoRespuestaGetUsus(data)
 {
     let color="";
-    let tabla = "<table border='1' class='table'>";
-    tabla += "<th>DNI</th><th>NOMBRE</th><th>EDAD</th><th>SEXO</th><th>ADMIN</th><th>INSTRUCTOR</th>";
+    let tabla = "<table style='text-align:center; border-color: black;' border='1' class='table table-bordered'>";
+    tabla += "<tr class='table-dark'><th>DNI</th><th>NOMBRE</th><th>EDAD</th><th>SEXO</th><th>ADMIN</th><th>INSTRUCTOR</th></tr>";
     for(let oUsu of data){
         if(oUsu.admin == 1)
             color = '#F0F3A0';
@@ -856,7 +856,7 @@ function procesoRespuestaGetUsus(data)
             else
             color = '#EDBB99';
         }
-        tabla+="<tr style='background-color:"+color+"'> <td>"+oUsu.dni+"</td>  <td>"+oUsu.nombre+"</td>  <td>"+oUsu.edad+"</td>  <td>"+oUsu.sexo+"</td>   <td>"+oUsu.admin+"</td>   <td>"+oUsu.instruc+"</td>  </tr>"
+        tabla+="<tr style='background-color:"+color+"'> <td>"+oUsu.dni+"</td>  <td>"+oUsu.nombre+"</td>  <td>"+oUsu.edad+"</td>  <td>"+(oUsu.sexo=='M'?'Masculino':'Femenino')+"</td>   <td>"+(oUsu.admin==0?'NO':'SI')+"</td>   <td>"+(oUsu.instruc=='S'?'SI':'NO')+"</td>  </tr>"
     }
     tabla+="<table>";
     document.getElementById("resuls").innerHTML=tabla;
@@ -869,8 +869,8 @@ function listadoPistas(){
 }
 function procesoRespuestaGetListaPistas(data)
 {
-    let tabla = "<table border='1' class='table'>";
-    tabla += "<th>NUMERO PISTA</th><th>NOMBRE</th><th>DESCRIPCION</th>";
+    let tabla = "<table style='text-align:center' class='table table-info table-bordered'>";
+    tabla += "<tr class='table-primary'><th>NUMERO PISTA</th><th>NOMBRE</th><th>DESCRIPCION</th></tr>";
     for(let oPista of data){
         tabla+="<tr> <td>"+oPista.num_pista+"</td>  <td>"+oPista.nombre_pista+"</td>  <td>"+oPista.descripcion+"</td> </tr>"
     }
@@ -926,8 +926,8 @@ function filtrarBusquedaClases(){
                 console.log(result);
                 let primeraInser="";
                 let segundaInser="";
-                oTabla = "<table style='text-align : center' class='table table-striped table-dark table-bordered'><tr class='table-info'><th>Nombre</th><th>Descripcion</th><th>Capacidad</th><th>Instructor</th><th>Actividad</th><th>Fecha</th><th>Hora</th></tr>";
                 let fecha = new Date();  
+                let oTablita ="";
                for(let clase of result){
 
                 fecha=new Date(clase.fecha_inicio)  
@@ -938,13 +938,23 @@ function filtrarBusquedaClases(){
                segundaInser += "<tr><td>"+clase.nombre+"</td> <td>"+clase.descripcion+"</td> <td>"+clase.capacidad+"</td>  <td>"+clase.instructor+"</td>  <td>"+clase.tipo_actividad+"</td> <td>"+devolverFecha(clase.fecha_inicio)+"</td>  <td>"+devolverHora(clase.hora_inicio)+"</td></tr>";
                }
                }
-               oTabla += "<tr class='table-warning'><td colspan='7'><b>Pendientes</b></td></tr>";
-               oTabla += primeraInser;
-               oTabla += "<tr class='table-warning'><td colspan='7'><b>Pasadas</b></td></tr>";
-               oTabla += segundaInser;
-               oTabla+="</table>";
+               let oCabecera = "<table style='text-align : center' class='table table-striped table-dark table-bordered'><tr class='table-info'><th>Nombre</th><th>Descripcion</th><th>Capacidad</th><th>Instructor</th><th>Actividad</th><th>Fecha</th><th>Hora</th></tr>";
+               if(primeraInser != "")
+               {
+               oTablita += oCabecera;    
+               oTablita += "<legend><b>Pendientes</b></legend>";
+               oTablita += primeraInser;
+               oTablita += "</table>"
+               }
+               if(segundaInser != "")
+               {
+               oTablita += oCabecera;    
+               oTablita += "<legend><b>Terminadas</b></legend>";
+               oTablita += segundaInser;
+               oTablita += "</table>"
+               }
 
-               document.getElementById("resuls").innerHTML = oTabla;
+               document.getElementById("resuls").innerHTML = oTablita;
             });
         }
 
@@ -979,7 +989,7 @@ function filtrarBusquedasPistas(){
                 console.log(result);
                 let primeraInser="";
                 let segundaInser="";
-                oTabla = "<table style='text-align : center' class='table table-striped table-dark table-bordered'><tr class='table-info'><th>Pista</th><th>Nombre Reserva</th><th>Dia</th><th>Hora inicio</th><th>Hora Fin</th><th>Descripcion</th></tr>";
+                let oTablita="";
                 let fecha = new Date();  
                for(let pista of result){
 
@@ -990,13 +1000,20 @@ function filtrarBusquedasPistas(){
                segundaInser += "<tr><td>"+pista.nombre_pista+"</td> <td>"+pista.nombre+"</td> <td>"+devolverFecha(pista.dia_reserva)+"</td>  <td>"+devolverHora(pista.hora_inicio)+"</td>  <td>"+devolverHora(pista.hora_fin)+"</td> <td>"+pista.descripcion+"</td>  </tr>";
 
                }
-               oTabla += "<tr class='table-warning'><td colspan='6'><b>Pendientes</b></td></tr>";
-               oTabla += primeraInser;
-               oTabla += "<tr class='table-warning'><td colspan='6'><b>Pasadas</b></td></tr>";
-               oTabla += segundaInser;
-               oTabla+="</table>";
-
-               document.getElementById("resuls").innerHTML = oTabla;
+               if(primeraInser!=""){
+                oTablita += "<table style='text-align : center' class='table table-striped table-dark table-bordered'><tr class='table-info'><th>Pista</th><th>Nombre Reserva</th><th>Dia</th><th>Hora inicio</th><th>Hora Fin</th><th>Descripcion</th></tr>";
+                oTablita += "<legend><b>Pendientes</b></legend>";
+               oTablita += primeraInser;
+               oTablita+="</table>";
+               }
+            
+               if(segundaInser!=""){
+                oTablita += "<table style='text-align : center' class='table table-striped table-dark table-bordered'><tr class='table-info'><th>Pista</th><th>Nombre Reserva</th><th>Dia</th><th>Hora inicio</th><th>Hora Fin</th><th>Descripcion</th></tr>";
+                oTablita += "<legend><b>Terminadas</b></legend>";
+               oTablita += segundaInser;
+               oTablita+="</table>";
+               }
+               document.getElementById("resuls").innerHTML = oTablita;
             });
         }
 
